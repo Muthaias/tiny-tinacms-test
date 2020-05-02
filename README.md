@@ -1,6 +1,8 @@
 # Disclaimer
 This is not the best code in the world. This is just a tribute. I wanted to see how `TinaCMS` works and I wanted a tiny setup so I made a tiny setup. Dependencies takes no prisoners so make sure to use `yarn` if you care to keep your sanity. Just a word of caution for your own sake. Happy coding.
 
+The code is under the MIT license.
+
 # Tiny TinaCMS Test
 This little setup is a minimal way to test features from TinaCMS without mixing in other complex build and content delivery systems. The purpose is as follows.
 * Be small
