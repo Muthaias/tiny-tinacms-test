@@ -23,3 +23,4 @@ npm run serve
 * The build size is huge but this is outside the scope of this project
 * Using a later version of `styled-components` will currently break all the styles. This is either a problem with `TinaCMS` or `styled-components`
 * The dist is really unclean at the moment but that's life
+* Current version of TinaCMS will generate a react warning regarding custom property names
