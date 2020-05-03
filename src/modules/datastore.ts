@@ -7,6 +7,7 @@ export interface DataStore<T> {
     remove(entry: Entry): Promise<void>;
 
     onChange(update: (store: DataStore<T>) => void);
+    offChange(update: (store: DataStore<T>) => void);
 }
 
 export type Entry = {
@@ -29,9 +30,10 @@ export type Author = {
 
 export class LocalStorageStore<T> implements DataStore<T> {
     private _targetId: string;
-    private _cache: Map<string, Entry & T>;
-    private _cacheTime: string;
-    private _onChangeCallback: (store: DataStore<T>) => void = () => {};
+    private _cache: Map<string, Entry & T> = new Map<string, Entry & T>();
+    private _cacheTime: string = "__nocache";
+    private _listeners: ((store: DataStore<T>) => void)[] = [];
+    private _triggerPromise: Promise<any> | null = null;
 
     constructor(targetId: string) {
         this._targetId = targetId;
@@ -42,7 +44,9 @@ export class LocalStorageStore<T> implements DataStore<T> {
     }
 
     async get(entry: Entry): Promise<Entry & T> {
-        return this._map.get(entry.id);
+        const e = this._map.get(entry.id);
+        if (e === undefined) throw new Error("No entry with id: " + entry.id);
+        return e;
     }
 
     async add(data: T): Promise<Entry & T> {
@@ -58,9 +62,9 @@ export class LocalStorageStore<T> implements DataStore<T> {
 
     async update(entry: Entry & Partial<T>) {
         const newEntry: Entry & T = {
-            ...this._map.get(entry.id),
+            ...this.get(entry),
             ...entry
-        };
+        } as unknown as Entry & T;
         this._map.set(entry.id, newEntry);
         this._entries = this.entries;
     }
@@ -70,8 +74,13 @@ export class LocalStorageStore<T> implements DataStore<T> {
         this._entries = this.entries;
     }
 
-    onChange(update: ((store: DataStore<T>) => void) | null) {
-        this._onChangeCallback = update !== null ? update : () => {};
+    onChange(update: (store: DataStore<T>) => void) {
+        this.offChange(update);
+        this._listeners.push(update);
+    }
+
+    offChange(update: (store: DataStore<T>) => void) {
+        this._listeners = this._listeners.filter(l => l !== update);
     }
 
     private get _map(): Map<string, Entry & T> {
@@ -89,7 +98,12 @@ export class LocalStorageStore<T> implements DataStore<T> {
 
     private set _entries(data: (Entry & T)[]) {
         window.localStorage.setItem(this._targetId, JSON.stringify(data));
-        this._onChangeCallback(this);
+        if (!this._triggerPromise) {
+            this._triggerPromise = Promise.resolve().then(() => {
+                this._listeners.forEach(l => l(this));
+                this._triggerPromise = null;
+            });
+        }
     }
 
     private get _entries(): (Entry & T)[] {

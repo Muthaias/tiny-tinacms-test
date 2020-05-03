@@ -6,6 +6,8 @@ import {cmsFromStores} from "./modules/cms";
 
 import {Main} from "./modules/main";
 import {LocalStorageStore, DataStore, Entry, Post, Author} from "./modules/datastore";
+import {useStoreUpdate, submitEntries, requireEntryId} from "./modules/store-utilitites";
+import {createAuthorsFields, createPostsFields} from "./layouts";
 
 const CMSProvider: React.FunctionComponent<{init: () => TinaCMS, children}> = (props) => {
     const cms = useMemo(props.init, []);
@@ -17,92 +19,11 @@ const CMSProvider: React.FunctionComponent<{init: () => TinaCMS, children}> = (p
     );
 }
 
-function createPostsFields(
-    posts: {label: string, value: string}[] = [],
-    authors: {label: string, value: string}[] = [],
-) {
-    return [
-        {
-            label: "Posts",
-            name: "posts",
-            component: "group-list",
-            description: "A list of posts",
-            itemProps: item => ({
-                id: item.id || item.key,
-                key: item.id || item.key,
-                label: item.title,
-            }),
-            defaultItem: () => ({
-                title: "New post",
-                content: "",
-                key: "__post:" + Date.now(),
-            }),
-            fields: [
-                {
-                    label: "Title",
-                    name: "title",
-                    component: "text",
-                },
-                {
-                    label: "Author",
-                    name: "author",
-                    component: "select",
-                    options: authors
-                }
-            ],
-        },
-        {
-            label: "Select post",
-            name: "postId",
-            component: "select",
-            options: posts
-        }
-    ];
-}
-
-function createAuthorsFields() {
-    return [
-        {
-            label: "Authors",
-            name: "authors",
-            component: "group-list",
-            description: "A list of authors",
-            itemProps: item => ({
-                key: item.id || item.key,
-                label: item.name,
-            }),
-            defaultItem: () => ({
-                name: "Unknown author",
-                content: "",
-                key: "__post:" + Date.now(),
-            }),
-            fields: [
-                {
-                    label: "Name",
-                    name: "name",
-                    component: "text",
-                },
-            ],
-        }
-    ];
-}
-
-function useStoreUpdate<T>(
-    store: DataStore<T>,
-    callback: (store: DataStore<T>) => void,
-    deps: any[],
-) {
-    useEffect(() => {
-        store.onChange(callback);
-        return () => store.onChange(null);
-    }, [store, ...deps]);
-}
-
 const Application: React.FunctionComponent = () => {
     const cms = useCMS();
     const postsApi: DataStore<Post> = cms.api.posts;
     const authorsApi: DataStore<Author> = cms.api.authors;
-    const postFormOptions: FormOptions<{posts: (Entry & Post)[], postId: string}> = {
+    const postFormOptions: FormOptions<{posts: (Entry & Post)[], postId: string | null}> = {
         id: "__posts",
         label: "Posts",
         fields: createPostsFields(),
@@ -110,35 +31,23 @@ const Application: React.FunctionComponent = () => {
             posts: [],
             postId: null,
         }),
-        onSubmit: ({posts}) => {
-            const removals = postsApi.entries.filter(
-                entry => !posts.some(p => p.id === entry.id)
-            ).map(
-                (entry) => postsApi.remove(entry)
-            );
-            const updates = posts.map((post, index) => {
-                if (post.id) {
-                    return postsApi.update({
-                        id: post.id,
-                        title: post.title,
-                        author: post.author,
-                        index: index,
-                    });
-                } else {
-                    return postsApi.add({
-                        title: post.title,
-                        type: "basic",
-                        content: "",
-                        author: post.author,
-                        index: index,
-                    });
-                }
-            });
-            return Promise.all<any>([
-                ...removals,
-                ...updates,
-            ]);
-        } 
+        onSubmit: submitEntries<Post, {posts: (Entry & Post)[], postId: string | null}>(
+            postsApi,
+            (post, index) => ({
+                title: post.title || "",
+                type: "basic",
+                content: "",
+                author: post.author,
+                index: index,
+            }),
+            (post, index) => ({
+                id: requireEntryId(post),
+                title: post.title,
+                author: post.author,
+                index: index,
+            }),
+            ({posts}) => posts
+        )
     }
     const authorFormOptions: FormOptions<{authors: (Entry & Author)[]}> = {
         id: "__authors",
@@ -147,31 +56,19 @@ const Application: React.FunctionComponent = () => {
         loadInitialValues: () => Promise.resolve({
             authors: [],
         }),
-        onSubmit: ({authors}) => {
-            const removals = authorsApi.entries.filter(
-                entry => !authors.some(p => p.id === entry.id)
-            ).map(
-                (entry) => authorsApi.remove(entry)
-            );
-            const updates = authors.map((author, index) => {
-                if (author.id) {
-                    return authorsApi.update({
-                        id: author.id,
-                        name: author.name,
-                        index: index,
-                    });
-                } else {
-                    return authorsApi.add({
-                        name: author.name,
-                        index: index,
-                    });
-                }
-            });
-            return Promise.all<any>([
-                ...removals,
-                ...updates,
-            ]);
-        } 
+        onSubmit: submitEntries<Author, {authors: (Entry & Author)[]}>(
+            authorsApi,
+            (author, index) => ({
+                name: author.name || "",
+                index: index,
+            }),
+            (author, index) => ({
+                id: requireEntryId(author),
+                name: author.name,
+                index: index,
+            }),
+            ({authors}) => authors
+        )
     }
     const [{posts, postId}, postForm] = useForm<{posts: (Entry & Post)[], postId: string}>(postFormOptions);
     const [{authors}, authorForm] = useForm<{authors: (Entry & Author)[], postId: string}>(authorFormOptions);
@@ -180,8 +77,8 @@ const Application: React.FunctionComponent = () => {
     const updatePosts = useCallback((newPosts: (Entry & Post)[], newAuthors: (Entry & Author)[]) => {
         postForm.updateFields(
             createPostsFields(
-                newPosts.sort((a, b) => a.index - b.index).map(post => ({value: post.id, label: post.title})),
-                newAuthors.sort((a, b) => a.index - b.index).map(author => ({value: author.id, label: author.name}))
+                newPosts.sort((a, b) => (a.index || 0) - (b.index || 0)).map(post => ({value: post.id, label: post.title})),
+                newAuthors.sort((a, b) => (a.index || 0) - (b.index || 0)).map(author => ({value: author.id, label: author.name}))
             )
         );
         postForm.updateValues({posts: newPosts});
@@ -195,11 +92,11 @@ const Application: React.FunctionComponent = () => {
         ) updatePosts(postsApi.entries, authorsApi.entries);
     }, [postsApi, authorsApi]);
     useStoreUpdate(postsApi, () => {
-        if (postsApi !== undefined && authors !== undefined) updatePosts(postsApi.entries, authors);
-    }, [updatePosts, authors]);
+        if (postsApi !== undefined && authorsApi !== undefined) updatePosts(postsApi.entries, authorsApi.entries);
+    }, [updatePosts, authorsApi]);
     useStoreUpdate(authorsApi, () => {
-        if (authorsApi !== undefined && posts !== undefined) updatePosts(posts, authorsApi.entries);
-    }, [updatePosts, posts]);
+        if (authorsApi !== undefined && postsApi !== undefined) updatePosts(postsApi.entries, authorsApi.entries);
+    }, [updatePosts, postsApi]);
     return (
         <div className="application">
             {postId !== undefined && <Main postId={postId}/>}
