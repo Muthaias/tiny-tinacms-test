@@ -5,6 +5,8 @@ export interface DataStore<T> {
     add(entry: T): Promise<Entry & T>;
     update(entry: Entry & Partial<T>): Promise<void>;
     remove(entry: Entry): Promise<void>;
+
+    onChange(update: (store: DataStore<T>) => void);
 }
 
 export type Entry = {
@@ -15,6 +17,7 @@ export type Post = {
     title: string;
     type: string;
     content: string;
+    author?: string;
     imageUrl?: string;
     index?: number,
 }
@@ -28,6 +31,7 @@ export class LocalStorageStore<T> implements DataStore<T> {
     private _targetId: string;
     private _cache: Map<string, Entry & T>;
     private _cacheTime: string;
+    private _onChangeCallback: (store: DataStore<T>) => void = () => {};
 
     constructor(targetId: string) {
         this._targetId = targetId;
@@ -66,6 +70,10 @@ export class LocalStorageStore<T> implements DataStore<T> {
         this._entries = this.entries;
     }
 
+    onChange(update: ((store: DataStore<T>) => void) | null) {
+        this._onChangeCallback = update !== null ? update : () => {};
+    }
+
     private get _map(): Map<string, Entry & T> {
         if (this._cache && this._cacheTime === window.localStorage.getItem(this._targetId + "cache_time")) {
             return this._cache;
@@ -81,6 +89,7 @@ export class LocalStorageStore<T> implements DataStore<T> {
 
     private set _entries(data: (Entry & T)[]) {
         window.localStorage.setItem(this._targetId, JSON.stringify(data));
+        this._onChangeCallback(this);
     }
 
     private get _entries(): (Entry & T)[] {

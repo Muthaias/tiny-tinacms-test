@@ -1,7 +1,7 @@
 import * as React from "react";
-import {useMemo, useState, useEffect} from "react";
+import {useMemo, useCallback, useEffect} from "react";
 import * as ReactDOM from "react-dom";
-import {TinaProvider, useForm, TinaCMS, useCMS, FormOptions, ActionButton, usePlugins, usePlugin} from "tinacms";
+import {TinaProvider, useForm, TinaCMS, useCMS, FormOptions, usePlugins, usePlugin} from "tinacms";
 import {cmsFromStores} from "./modules/cms";
 
 import {Main} from "./modules/main";
@@ -17,7 +17,10 @@ const CMSProvider: React.FunctionComponent<{init: () => TinaCMS, children}> = (p
     );
 }
 
-function createPostsFields(posts: {label: string, value: string}[] = []) {
+function createPostsFields(
+    posts: {label: string, value: string}[] = [],
+    authors: {label: string, value: string}[] = [],
+) {
     return [
         {
             label: "Posts",
@@ -34,11 +37,19 @@ function createPostsFields(posts: {label: string, value: string}[] = []) {
                 content: "",
                 key: "__post:" + Date.now(),
             }),
-            fields: [{
-                label: "Title",
-                name: "title",
-                component: "text",
-            }],
+            fields: [
+                {
+                    label: "Title",
+                    name: "title",
+                    component: "text",
+                },
+                {
+                    label: "Author",
+                    name: "author",
+                    component: "select",
+                    options: authors
+                }
+            ],
         },
         {
             label: "Select post",
@@ -76,6 +87,17 @@ function createAuthorsFields() {
     ];
 }
 
+function useStoreUpdate<T>(
+    store: DataStore<T>,
+    callback: (store: DataStore<T>) => void,
+    deps: any[],
+) {
+    useEffect(() => {
+        store.onChange(callback);
+        return () => store.onChange(null);
+    }, [store, ...deps]);
+}
+
 const Application: React.FunctionComponent = () => {
     const cms = useCMS();
     const postsApi: DataStore<Post> = cms.api.posts;
@@ -85,7 +107,7 @@ const Application: React.FunctionComponent = () => {
         label: "Posts",
         fields: createPostsFields(),
         loadInitialValues: () => Promise.resolve({
-            posts: postsApi.entries.sort((a, b) => a.index - b.index),
+            posts: [],
             postId: null,
         }),
         onSubmit: ({posts}) => {
@@ -99,6 +121,7 @@ const Application: React.FunctionComponent = () => {
                     return postsApi.update({
                         id: post.id,
                         title: post.title,
+                        author: post.author,
                         index: index,
                     });
                 } else {
@@ -106,6 +129,7 @@ const Application: React.FunctionComponent = () => {
                         title: post.title,
                         type: "basic",
                         content: "",
+                        author: post.author,
                         index: index,
                     });
                 }
@@ -121,7 +145,7 @@ const Application: React.FunctionComponent = () => {
         label: "Authors",
         fields: createAuthorsFields(),
         loadInitialValues: () => Promise.resolve({
-            authors: authorsApi.entries.sort((a, b) => a.index - b.index),
+            authors: [],
         }),
         onSubmit: ({authors}) => {
             const removals = authorsApi.entries.filter(
@@ -153,13 +177,29 @@ const Application: React.FunctionComponent = () => {
     const [{authors}, authorForm] = useForm<{authors: (Entry & Author)[], postId: string}>(authorFormOptions);
     usePlugins(postForm);
     usePlugin(authorForm);
+    const updatePosts = useCallback((newPosts: (Entry & Post)[], newAuthors: (Entry & Author)[]) => {
+        postForm.updateFields(
+            createPostsFields(
+                newPosts.sort((a, b) => a.index - b.index).map(post => ({value: post.id, label: post.title})),
+                newAuthors.sort((a, b) => a.index - b.index).map(author => ({value: author.id, label: author.name}))
+            )
+        );
+        postForm.updateValues({posts: newPosts});
+        authorForm.updateValues({authors: newAuthors});
+    }, [postForm, authorForm]);
+
     useEffect(() => {
-        if (posts !== undefined) {
-            postForm.updateFields(
-                createPostsFields(posts.filter(post => !!post.id).map(post => ({value: post.id, label: post.title})))
-            );
-        }
-    }, [posts]);
+        if (
+            postsApi !== undefined &&
+            authorsApi !== undefined
+        ) updatePosts(postsApi.entries, authorsApi.entries);
+    }, [postsApi, authorsApi]);
+    useStoreUpdate(postsApi, () => {
+        if (postsApi !== undefined && authors !== undefined) updatePosts(postsApi.entries, authors);
+    }, [updatePosts, authors]);
+    useStoreUpdate(authorsApi, () => {
+        if (authorsApi !== undefined && posts !== undefined) updatePosts(posts, authorsApi.entries);
+    }, [updatePosts, posts]);
     return (
         <div className="application">
             {postId !== undefined && <Main postId={postId}/>}
