@@ -30,7 +30,7 @@ export function createPostsFields(
                     label: "Author",
                     name: "author",
                     component: "select",
-                    options: authors
+                    options: [{label: "None", value: null}, ...authors]
                 }
             ],
         },
@@ -38,7 +38,7 @@ export function createPostsFields(
             label: "Select post",
             name: "postId",
             component: "select",
-            options: posts
+            options: [{label: "None", value: null}, ...posts]
         }
     ];
 }
