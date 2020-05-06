@@ -2,12 +2,14 @@ const CopyPlugin = require("copy-webpack-plugin");
 module.exports = {
     mode: "production",
 
-    // Enable sourcemaps for debugging webpack's output.
+    entry: {
+        main: './src/index.tsx'
+    },
+
     devtool: "source-map",
 
     resolve: {
-        // Add '.ts' and '.tsx' as resolvable extensions.
-        extensions: [".ts", ".tsx", ".js"]
+        extensions: [".ts", ".tsx", ".js", ".css"]
     },
 
     module: {
@@ -22,8 +24,16 @@ module.exports = {
                 ]
             },
             {
+                test: /\.css$/,
+                use: [
+                    'style-loader',
+                    {loader: 'css-loader', options: { importLoaders: 1 }},
+                    'postcss-loader'
+                ]
+            },
+            {
                 enforce: "pre",
-                test: /\.js$/,
+                test: /\.ts(x?)$/,
                 loader: "source-map-loader"
             }
         ]
@@ -37,8 +47,8 @@ module.exports = {
     plugins: [
         new CopyPlugin([
             { from: "./index.html", to: "./index.html" },
-            { from: "./node_modules/react/umd/react.development.js", to: "./vendor/react.js" },
-            { from: "./node_modules/react-dom/umd/react-dom.development.js", to: "./vendor/react-dom.js" },
+            { from: "./node_modules/react/umd/react.production.min.js", to: "./vendor/react.js" },
+            { from: "./node_modules/react-dom/umd/react-dom.production.min.js", to: "./vendor/react-dom.js" },
         ]),
     ],
 };
