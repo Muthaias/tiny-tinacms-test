@@ -25,3 +25,4 @@ npm run serve
 * The dist is really unclean at the moment but that's life
 * Current version of TinaCMS will generate a react warning regarding custom property names
 * Obviously this project has already become too big and is breaking almost all the initial goals. Check `commit history` for simpler times
+* `Tailwind` seems to create extra bloat. I might have to reconsider using it for this project
