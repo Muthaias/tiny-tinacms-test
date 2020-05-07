@@ -1,6 +1,8 @@
 const CopyPlugin = require("copy-webpack-plugin");
+const mode = "production";
+const reactLib =  mode === "production" ? "production.min" : "development";
 module.exports = {
-    mode: "production",
+    mode: mode,
 
     // Enable sourcemaps for debugging webpack's output.
     devtool: "source-map",
@@ -37,8 +39,8 @@ module.exports = {
     plugins: [
         new CopyPlugin([
             { from: "./index.html", to: "./index.html" },
-            { from: "./node_modules/react/umd/react.development.js", to: "./vendor/react.js" },
-            { from: "./node_modules/react-dom/umd/react-dom.development.js", to: "./vendor/react-dom.js" },
+            { from: "./node_modules/react/umd/react." + reactLib + ".js", to: "./vendor/react.js" },
+            { from: "./node_modules/react-dom/umd/react-dom." + reactLib + ".js", to: "./vendor/react-dom.js" },
         ]),
     ],
 };
