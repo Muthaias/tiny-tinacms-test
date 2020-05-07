@@ -1,7 +1,8 @@
 import * as React from "react";
 import {useMemo} from "react";
 import * as ReactDOM from "react-dom";
-import {TinaProvider, TinaCMS} from "tinacms";
+import {TinaCMS} from "tinacms";
+import {TinaProvider} from "./hacks/tinaprovider";
 
 import {cmsFromStores} from "./modules/cms";
 import {Application} from "./modules/application";
