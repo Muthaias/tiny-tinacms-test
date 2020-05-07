@@ -1,17 +1,23 @@
 import * as React from "react";
 import ReactMarkdown from "react-markdown";
 import {useLocalForm, useCMS} from "tinacms";
+import styled from "styled-components";
 
+const ContentWrapper = styled.div`
+    padding: 30px;
+    font-family: verdana, "DejaVu Sans", "Bitstream Vera Sans";
+    font-size: 12px;
+`
 
 export const MainCore: React.FunctionComponent<{
     title: string;
     content: string;
 }> = ({title, content}) => {
     return (
-        <div>
+        <ContentWrapper>
             <h1>{title}</h1>
             <ReactMarkdown source={content || ""}></ReactMarkdown>
-        </div>
+        </ContentWrapper>
     );
 }
 
