@@ -1,46 +1,52 @@
 const CopyPlugin = require("copy-webpack-plugin");
-const mode = "production";
-const reactLib =  mode === "production" ? "production.min" : "development";
-module.exports = {
-    mode: mode,
 
-    // Enable sourcemaps for debugging webpack's output.
-    devtool: "source-map",
+module.exports = (env) => {
+    env = env || {
+        production: false,
+    };
+    const reactLib = env.production ? "production.min" : "development";
+    return {
+        mode: env.production ? "production" : "development",
+        watch: env.production ? false : true,
 
-    resolve: {
-        // Add '.ts' and '.tsx' as resolvable extensions.
-        extensions: [".ts", ".tsx", ".js"]
-    },
+        // Enable sourcemaps for debugging webpack's output.
+        devtool: "source-map",
 
-    module: {
-        rules: [
-            {
-                test: /\.ts(x?)$/,
-                exclude: /node_modules/,
-                use: [
-                    {
-                        loader: "ts-loader"
-                    }
-                ]
-            },
-            {
-                enforce: "pre",
-                test: /\.js$/,
-                loader: "source-map-loader"
-            }
-        ]
-    },
+        resolve: {
+            // Add '.ts' and '.tsx' as resolvable extensions.
+            extensions: [".ts", ".tsx", ".js"]
+        },
 
-    externals: {
-        "react": "React",
-        "react-dom": "ReactDOM"
-    },
+        module: {
+            rules: [
+                {
+                    test: /\.ts(x?)$/,
+                    exclude: /node_modules/,
+                    use: [
+                        {
+                            loader: "ts-loader"
+                        }
+                    ]
+                },
+                {
+                    enforce: "pre",
+                    test: /\.js$/,
+                    loader: "source-map-loader"
+                }
+            ]
+        },
 
-    plugins: [
-        new CopyPlugin([
-            { from: "./index.html", to: "./index.html" },
-            { from: "./node_modules/react/umd/react." + reactLib + ".js", to: "./vendor/react.js" },
-            { from: "./node_modules/react-dom/umd/react-dom." + reactLib + ".js", to: "./vendor/react-dom.js" },
-        ]),
-    ],
+        externals: {
+            "react": "React",
+            "react-dom": "ReactDOM"
+        },
+
+        plugins: [
+            new CopyPlugin([
+                { from: "./index.html", to: "./index.html" },
+                { from: "./node_modules/react/umd/react." + reactLib + ".js", to: "./vendor/react.js" },
+                { from: "./node_modules/react-dom/umd/react-dom." + reactLib + ".js", to: "./vendor/react-dom.js" },
+            ]),
+        ],
+    }
 };

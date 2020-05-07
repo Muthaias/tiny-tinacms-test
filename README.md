@@ -12,6 +12,15 @@ This little setup is a minimal way to test features from TinaCMS without mixing 
 
 ## Running
 The result will be hosted on `localhost:5000` by default.
+
+### Development
+```
+npx yarn install
+npm start
+npm run serve
+```
+
+### Production
 ```
 npx yarn install
 npm run build
