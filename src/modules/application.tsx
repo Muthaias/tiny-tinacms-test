@@ -1,26 +1,42 @@
 import * as React from "react";
 import {useCallback, useEffect} from "react";
-import {useForm, useCMS, FormOptions, usePlugins, usePlugin} from "tinacms";
+import {useForm, useCMS, FormOptions, usePlugins, useScreenPlugin} from "tinacms";
 
 import {Main} from "./main";
 import {useStoreUpdate, submitEntries, requireEntryId} from "./store-utilitites";
 import {createAuthorsFields, createPostsFields} from "../layouts";
 
 import {DataStore, Entry, Post, Author} from "./datastore";
+import {useEntrySelection} from "./entry-selection";
 
 export const Application: React.FunctionComponent = () => {
     const cms = useCMS();
+    const [postId, setPostId] = React.useState<string | null>(null);
     const postsApi: DataStore<Post> = cms.api.posts;
     const authorsApi: DataStore<Author> = cms.api.authors;
-    const postFormOptions: FormOptions<{posts: (Entry & Post)[], postId: string | null}> = {
+    const entrySelection = useEntrySelection<Entry & Post>("Post selection", {
+        getEntries: async (start: number, end: number) => {
+            return postsApi.entries.slice(start, end).map(post => ({
+                label: post.title,
+                entry: post,
+            }));
+        },
+        count: async () => postsApi.entries.length,
+        viewEntry: (entry) => {
+            console.log(entry);
+            setPostId(entry.entry.id);
+        },
+        removeEntry: async () => {},
+    }, 5);
+    useScreenPlugin(entrySelection);
+    const postFormOptions: FormOptions<{posts: (Entry & Post)[]}> = {
         id: "__posts",
         label: "Posts",
         fields: createPostsFields(),
         loadInitialValues: () => Promise.resolve({
             posts: [],
-            postId: null,
         }),
-        onSubmit: submitEntries<Post, {posts: (Entry & Post)[], postId: string | null}>(
+        onSubmit: submitEntries<Post, {posts: (Entry & Post)[]}>(
             postsApi,
             (post, index) => ({
                 title: post.title || "",
@@ -37,7 +53,7 @@ export const Application: React.FunctionComponent = () => {
             }),
             ({posts}) => posts
         )
-    }
+    };
     const authorFormOptions: FormOptions<{authors: (Entry & Author)[]}> = {
         id: "__authors",
         label: "Authors",
@@ -58,11 +74,10 @@ export const Application: React.FunctionComponent = () => {
             }),
             ({authors}) => authors
         )
-    }
-    const [{posts, postId}, postForm] = useForm<{posts: (Entry & Post)[], postId: string}>(postFormOptions);
-    const [{authors}, authorForm] = useForm<{authors: (Entry & Author)[], postId: string}>(authorFormOptions);
-    usePlugins(postForm);
-    usePlugin(authorForm);
+    };
+    const [{posts}, postForm] = useForm<{posts: (Entry & Post)[]}>(postFormOptions);
+    const [{authors}, authorForm] = useForm<{authors: (Entry & Author)[]}>(authorFormOptions);
+    usePlugins([postForm, authorForm]);
     const updatePosts = useCallback((newPosts: (Entry & Post)[], newAuthors: (Entry & Author)[]) => {
         postForm.updateFields(
             createPostsFields(

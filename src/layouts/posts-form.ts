@@ -33,12 +33,6 @@ export function createPostsFields(
                     options: [{label: "None", value: null}, ...authors]
                 }
             ],
-        },
-        {
-            label: "Select post",
-            name: "postId",
-            component: "select",
-            options: [{label: "None", value: null}, ...posts]
         }
     ];
 }
