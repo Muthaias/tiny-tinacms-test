@@ -55,7 +55,7 @@ const theme = css`
     --tina-font-size-7: 26px;
     --tina-font-size-8: 32px;
 
-    --tina-font-family: 'Inter', sans-serif;
+    --tina-font-family: sans-serif;
 
     --tina-font-weight-regular: 500;
     --tina-font-weight-bold: 600;
