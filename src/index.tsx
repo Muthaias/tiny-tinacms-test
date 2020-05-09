@@ -2,9 +2,9 @@ import * as React from "react";
 import {useMemo} from "react";
 import * as ReactDOM from "react-dom";
 import {TinaCMS} from "tinacms";
-import {TinaProvider} from "./hacks/tinaprovider";
-import {GlobalStyles} from "./hacks/globalstyles";
+import {ThemeProvider} from "styled-components"
 
+import {TinaProvider} from "./hacks/tinaprovider";
 import {cmsFromStores} from "./modules/cms";
 import {Application} from "./modules/application";
 import {LocalStorageStore, Post, Author} from "./modules/datastore";
@@ -13,12 +13,11 @@ const CMSProvider: React.FunctionComponent<{init: () => TinaCMS, children}> = (p
     const cms = useMemo(props.init, []);
 
     return (
-        <>
-            <GlobalStyles />
+        <ThemeProvider theme={{useExternalFont: false}}>
             <TinaProvider cms={cms}>
                 {React.Children.toArray(props.children)}
             </TinaProvider>
-        </>
+        </ThemeProvider>
     );
 }
 

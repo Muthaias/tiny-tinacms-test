@@ -1,4 +1,5 @@
 
+import {createContext} from "react";
 import { createGlobalStyle, css } from "styled-components";
 
 const theme = css`
@@ -70,4 +71,7 @@ const theme = css`
 
 export const GlobalStyles = createGlobalStyle`
   ${theme};
+  ${props => props.theme.useExternalFont ? "@import url('https://rsms.me/inter/inter.css');" : ""}
 `
+
+const StyleContext = createContext(GlobalStyles);
