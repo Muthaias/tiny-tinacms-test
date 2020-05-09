@@ -1,8 +1,8 @@
 import * as React from "react";
-import { ModalProvider } from '@tinacms/react-modals'
-import { SidebarProvider, SidebarPosition } from '@tinacms/react-sidebar'
-import { ToolbarProvider } from '@tinacms/react-toolbar'
-import { Alerts } from '@tinacms/react-alerts'
+import { ModalProvider } from "@tinacms/react-modals";
+import { SidebarProvider, SidebarPosition } from "@tinacms/react-sidebar";
+import { ToolbarProvider } from "@tinacms/react-toolbar";
+import { Alerts } from "@tinacms/react-alerts";
 import {TinaCMS, CMSContext} from "tinacms";
 
 export interface TinaProviderProps {
