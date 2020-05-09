@@ -61,8 +61,9 @@ export class LocalStorageStore<T> implements DataStore<T> {
     }
 
     async update(entry: Entry & Partial<T>) {
+        const oldEntry = await this.get(entry);
         const newEntry: Entry & T = {
-            ...this.get(entry),
+            ...oldEntry,
             ...entry
         } as unknown as Entry & T;
         this._map.set(entry.id, newEntry);
