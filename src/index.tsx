@@ -13,9 +13,12 @@ const CMSProvider: React.FunctionComponent<{init: () => TinaCMS, children}> = (p
     const cms = useMemo(props.init, []);
 
     return (
-        <TinaProvider cms={cms}>
-            {React.Children.toArray(props.children)}
-        </TinaProvider>
+        <>
+            <GlobalStyles />
+            <TinaProvider cms={cms}>
+                {React.Children.toArray(props.children)}
+            </TinaProvider>
+        </>
     );
 }
 
@@ -26,7 +29,6 @@ ReactDOM.render(
             new LocalStorageStore<Author>("__authors")
         )}
     >
-        <GlobalStyles />
         <Application />
     </CMSProvider>,
     document.getElementById("app")
