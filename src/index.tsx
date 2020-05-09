@@ -3,6 +3,7 @@ import {useMemo} from "react";
 import * as ReactDOM from "react-dom";
 import {TinaCMS} from "tinacms";
 import {TinaProvider} from "./hacks/tinaprovider";
+import {GlobalStyles} from "./hacks/globalstyles";
 
 import {cmsFromStores} from "./modules/cms";
 import {Application} from "./modules/application";
@@ -25,6 +26,7 @@ ReactDOM.render(
             new LocalStorageStore<Author>("__authors")
         )}
     >
+        <GlobalStyles />
         <Application />
     </CMSProvider>,
     document.getElementById("app")
