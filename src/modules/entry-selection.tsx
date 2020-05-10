@@ -3,6 +3,7 @@ import {ScreenOptions} from "@tinacms/react-screens";
 import styled from "styled-components";
 
 const ContentWrapper = styled.div`
+    position: relative;
     padding: var(--tina-padding-big);
     background: var(--tina-color-grey-2);
 `
@@ -16,6 +17,10 @@ const IconButton = styled.div`
     flex-grow: 0;
     line-height: 300%;
     padding: 0 var(--tina-padding-small);
+    transition: background 0.1s;
+    &:hover {
+        background: var(--tina-color-grey-1);
+    }
 `
 
 const ElementWrapper = styled.div`
@@ -26,6 +31,10 @@ const ElementWrapper = styled.div`
     font-size: var(--tina-font-size-1);
     color: var(--tina-color-grey-9);
     border-bottom: solid 1px var(--tina-color-grey-3);
+    transition: color 0.1s;
+    &:hover {
+        color: var(--tina-color-primary-dark);
+    }
     &:last-child {
         border-bottom: none;
     }
@@ -62,14 +71,14 @@ const PageEntry = styled.div`
         width: 20%;
         height: 20%;
         border-radius: 50%;
-        transition: width 0.1s, height 0.1s;
+        transition: width 0.1s, height 0.1s, background 0.1s;
     }
     ${({ active }) => !active && `
         &:hover {
             &::after {
                 width: 40%;
                 height: 40%;
-                background: var(--tina-color-grey-9);
+                background: var(--tina-color-primary-dark);
             }
         }
     `}
@@ -86,6 +95,7 @@ export interface Entry<T> {
 };
 export interface EntrySupplier<T> {
     getEntries(start: number, end: number): Promise<Entry<T>[]>;
+    addEntry?: () => Promise<Entry<T>>;
     count(): Promise<number>;
     viewEntry(entry: Entry<T>);
     removeEntry(entry: Entry<T>): Promise<void>;
