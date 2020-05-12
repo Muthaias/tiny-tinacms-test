@@ -4,7 +4,7 @@ import * as ReactDOM from "react-dom";
 import {TinaCMS, TinaProvider} from "tinacms";
 
 import {cmsFromStores} from "./modules/cms";
-import {Application} from "./modules/application";
+import {Application} from "./components/application";
 import {LocalStorageStore, Post, Author} from "./modules/datastore";
 import {MenuContext} from "./contexts/menu";
 import {ThemeStyles} from "./styles";
