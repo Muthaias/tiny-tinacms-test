@@ -7,8 +7,8 @@ const MenuWrapper = styled.div`
     display: flex;
     justify-content: center;
     flex-wrap: nowrap;
-    background: rgba(0, 0, 0, 0.9);
-    color: #fff;
+    background: var(--theme-header-text-background);
+    color: var(--theme-header-text-color);
     font-family: var(--theme-font-family);
 `
 const MenuItem = styled.div`

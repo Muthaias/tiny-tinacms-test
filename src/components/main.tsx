@@ -8,28 +8,44 @@ const ContentWrapper = styled.div`
     padding: var(--theme-padding-big);
     font-family: var(--theme-font-family);
     font-size: var(--theme-font-size-normal);
+    background: var(--theme-color-content-background);
+    min-height: calc(100vh - var(--theme-height-header));
 `
 
-const HeaderImage = styled.div`
-    background-image: url('${props => props.headerImage || ""}');
+const Header = styled.div`
+    position: relative;
+    background-image: url('${props => props.data.headerImage || ""}');
     background-color: #333;
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 100% auto;
+    background-size: auto var(--theme-header-image-size);
     width: 100%;
-    height: 300px;
+    height: var(--theme-height-header);
+`
+
+const ContentTitle = styled.div`
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    padding: var(--theme-padding-small);
+    background: var(--theme-header-text-background);
+    color: var(--theme-header-text-color);
+    max-width: calc(0.5 * var(--theme-width-max));
+    font-size: var(--theme-font-size-big);
 `
 
 export const MainCore: React.FunctionComponent<ContentData> = (data) => {
     return (
         <>
-            <HeaderImage data={data}/>
+            <Header data={data}>
+                <ContentTitle>{data.title}</ContentTitle>
+            </Header>
             <ContentWrapper>
                 {(() => {
                     switch(data.type) {
                         case ContentType.Listing: return (
                             <>
-                                <h1>{data.title}</h1>
                                 <ul>
                                     {data.entries.map(entry => (
                                         <li key={entry.id}>{entry.title}</li>
@@ -40,7 +56,6 @@ export const MainCore: React.FunctionComponent<ContentData> = (data) => {
                         case ContentType.Page:
                         case ContentType.Post: return (
                             <>
-                                <h1>{data.title}</h1>
                                 <ReactMarkdown source={data.content || ""}></ReactMarkdown>
                             </>
                         );

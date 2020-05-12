@@ -5,14 +5,32 @@ const theme = css`
         --theme-padding-big: 30px;
         --theme-padding-medium: 20px;
         --theme-padding-small: 10px;
+
+        --theme-width-max: 1200px;
+        --theme-height-header: 300px;
+
+        --theme-header-image-size: 100%;
     
         --theme-font-family: verdana, "DejaVu Sans", "Bitstream Vera Sans";
         --theme-font-size-normal: 12px;
+        --theme-font-size-big: 24px;
+
+        --theme-header-text-background: rgba(0, 0, 0, 0.9);
+        --theme-header-text-color: #fff;
+
+        --theme-color-background: #eee;
+        --theme-color-content-background: #fff;
     }
 
     body {
         padding: 0;
         margin: 0;
+        font-family: var(--theme-font-family);
+        background: var(--theme-color-background);
+    }
+
+    * {
+        box-sizing: border-box;
     }
 `
 

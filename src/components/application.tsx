@@ -10,10 +10,13 @@ const MenuContainer = styled.div`
     top: var(--theme-padding-big);
     left: 0;
     width: 100%;
+    z-index: 1;
 `;
 
 const ApplicationContainer = styled.div`
     position: relative;
+    max-width: var(--theme-width-max);
+    margin: auto;
 `
 
 export const Application: React.FunctionComponent = () => {
