@@ -1,56 +1,57 @@
 import * as React from "react";
 import ReactMarkdown from "react-markdown";
-import {useLocalForm, useCMS} from "tinacms";
 import styled from "styled-components";
 
+import {useContent, ContentData, ContentType} from "../contexts/content";
+
 const ContentWrapper = styled.div`
-    padding: 30px;
-    font-family: verdana, "DejaVu Sans", "Bitstream Vera Sans";
-    font-size: 12px;
+    padding: var(--theme-padding-big);
+    font-family: var(--theme-font-family);
+    font-size: var(--theme-font-size-normal);
 `
 
-export const MainCore: React.FunctionComponent<{
-    title: string;
-    content: string;
-}> = ({title, content}) => {
+const HeaderImage = styled.div`
+    background-image: url('${props => props.headerImage || ""}');
+    background-color: #333;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% auto;
+    width: 100%;
+    height: 300px;
+`
+
+export const MainCore: React.FunctionComponent<ContentData> = (data) => {
     return (
-        <ContentWrapper>
-            <h1>{title}</h1>
-            <ReactMarkdown source={content || ""}></ReactMarkdown>
-        </ContentWrapper>
+        <>
+            <HeaderImage data={data}/>
+            <ContentWrapper>
+                {(() => {
+                    switch(data.type) {
+                        case ContentType.Listing: return (
+                            <>
+                                <h1>{data.title}</h1>
+                                <ul>
+                                    {data.entries.map(entry => (
+                                        <li key={entry.id}>{entry.title}</li>
+                                    ))}
+                                </ul>
+                            </>
+                        );
+                        case ContentType.Page:
+                        case ContentType.Post: return (
+                            <>
+                                <h1>{data.title}</h1>
+                                <ReactMarkdown source={data.content || ""}></ReactMarkdown>
+                            </>
+                        );
+                    }
+                })()}
+            </ContentWrapper>
+        </>
     );
 }
 
-export const Main: React.FunctionComponent<{postId: string | null}> = ({postId}) => {
-    const cms = useCMS();
-    const [{title, content}] = useLocalForm({
-        id: "__main:" + postId,
-        label: "Main content",
-        fields: [
-            {
-                name: 'title',
-                label: 'Title',
-                component: 'text',
-            },
-            {
-                name: 'content',
-                label: 'content',
-                component: 'markdown',
-            }
-        ],
-        loadInitialValues: () => postId === null ? Promise.resolve({
-            title: "Empty post",
-            content: "",
-        }) : cms.api.posts.get({id: postId}),
-        onSubmit: ({title, content}: {title: string, content: string}) => {
-            if (postId !== null) {
-                cms.api.posts.update({
-                    id: postId,
-                    title,
-                    content,
-                });
-            }
-        }
-    });
-    return <MainCore title={title} content={content}/>
+export const Main: React.SFC = () => {
+    const content = useContent();
+    return <MainCore {...content}/>
 }
