@@ -9,6 +9,10 @@ import {createAuthorsFields, createPostsFields} from "../layouts";
 import {DataStore, Entry, Post, Author} from "./datastore";
 import {useEntrySelection} from "./entry-selection";
 
+function sortEntries<T>(entries: T & {index?: number}[]) {
+    return entries.sort((a, b) => (a.index || 0) - (b.index || 0));
+}
+
 export const Application: React.FunctionComponent = () => {
     const cms = useCMS();
     const [postId, setPostId] = React.useState<string | null>(null);
@@ -23,7 +27,6 @@ export const Application: React.FunctionComponent = () => {
         },
         count: async () => postsApi.entries.length,
         viewEntry: (entry) => {
-            console.log(entry);
             setPostId(entry.entry.id);
         },
         removeEntry: async () => {},
@@ -34,7 +37,7 @@ export const Application: React.FunctionComponent = () => {
         label: "Posts",
         fields: createPostsFields(),
         loadInitialValues: () => Promise.resolve({
-            posts: [],
+            posts: sortEntries(postsApi.entries),
         }),
         onSubmit: submitEntries<Post, {posts: (Entry & Post)[]}>(
             postsApi,
@@ -59,7 +62,7 @@ export const Application: React.FunctionComponent = () => {
         label: "Authors",
         fields: createAuthorsFields(),
         loadInitialValues: () => Promise.resolve({
-            authors: [],
+            authors: sortEntries(authorsApi.entries),
         }),
         onSubmit: submitEntries<Author, {authors: (Entry & Author)[]}>(
             authorsApi,
@@ -78,29 +81,6 @@ export const Application: React.FunctionComponent = () => {
     const [{posts}, postForm] = useForm<{posts: (Entry & Post)[]}>(postFormOptions);
     const [{authors}, authorForm] = useForm<{authors: (Entry & Author)[]}>(authorFormOptions);
     usePlugins([postForm, authorForm]);
-    const updatePosts = useCallback((newPosts: (Entry & Post)[], newAuthors: (Entry & Author)[]) => {
-        postForm.updateFields(
-            createPostsFields(
-                newPosts.sort((a, b) => (a.index || 0) - (b.index || 0)).map(post => ({value: post.id, label: post.title})),
-                newAuthors.sort((a, b) => (a.index || 0) - (b.index || 0)).map(author => ({value: author.id, label: author.name}))
-            )
-        );
-        postForm.updateValues({posts: newPosts});
-        authorForm.updateValues({authors: newAuthors});
-    }, [postForm, authorForm]);
-
-    useEffect(() => {
-        if (
-            postsApi !== undefined &&
-            authorsApi !== undefined
-        ) updatePosts(postsApi.entries, authorsApi.entries);
-    }, [postsApi, authorsApi]);
-    useStoreUpdate(postsApi, () => {
-        if (postsApi !== undefined && authorsApi !== undefined) updatePosts(postsApi.entries, authorsApi.entries);
-    }, [updatePosts, authorsApi]);
-    useStoreUpdate(authorsApi, () => {
-        if (authorsApi !== undefined && postsApi !== undefined) updatePosts(postsApi.entries, authorsApi.entries);
-    }, [updatePosts, postsApi]);
 
     return (
         <div className="application">

@@ -1,7 +1,6 @@
 import {Field} from "tinacms";
 
 export function createPostsFields(
-    posts: {label: string, value: string}[] = [],
     authors: {label: string, value: string}[] = [],
 ): (Field & {[x: string]: any})[] {
     return [
