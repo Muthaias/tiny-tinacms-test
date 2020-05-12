@@ -26,6 +26,12 @@ export const mockPostsData: PostData[] = [
         content: "",
         headerImage: mockImageUrl,
     },
+    {
+        type: ContentType.Post,
+        title: "Brave new world!",
+        content: "",
+        headerImage: mockImageUrl,
+    },
 ];
 
 export const mockPagesData: PageData[] = [

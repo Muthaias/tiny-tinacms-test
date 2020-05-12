@@ -4,6 +4,7 @@ import styled from "styled-components";
 import {Main} from "./main";
 import {Menu} from "../components/menu";
 import {useMenu} from "../contexts/menu";
+import {ThemeStyles} from "./styles";
 
 const MenuContainer = styled.div`
     position: absolute;
@@ -23,6 +24,7 @@ export const Application: React.FunctionComponent = () => {
     const menu = useMenu();
     return (
         <ApplicationContainer className="application">
+            <ThemeStyles />
             <MenuContainer>
                 <Menu items={menu.items}></Menu>
             </MenuContainer>
