@@ -11,17 +11,17 @@ interface CommonContentData {
     headerImage?: string;
 }
 
-export interface PostData {
+export interface PostData extends CommonContentData {
     type: ContentType.Post;
     content: string;
 }
 
-export interface PageData {
+export interface PageData extends CommonContentData {
     type: ContentType.Page;
     content: string;
 }
 
-export interface ListingData {
+export interface ListingData extends CommonContentData {
     type: ContentType.Listing;
     entries: {
         title: string;
@@ -30,7 +30,7 @@ export interface ListingData {
     }[]
 }
 
-export type ContentData = CommonContentData & (
+export type ContentData = (
     PostData |
     PageData |
     ListingData
