@@ -15,7 +15,8 @@ import {
     ContentContext,
 } from "./contexts";
 import {
-    TinaPostProvider
+    TinaPostProvider,
+    TinaPageProvider,
 } from "./components/cms";
 import {
     mockMenuData,
@@ -39,9 +40,7 @@ const CMSProvider: React.FunctionComponent<{init: () => TinaCMS, children}> = (p
                         <TinaPostProvider postId={match.params.postId}>{React.Children.toArray(props.children)}</TinaPostProvider>
                     )} />
                     <Route path="/page/:pageId" render={({match}) => (
-                        <ContentContext.Provider value={mockPagesData[match.params.pageId] || mockPagesData[0]}>
-                            {React.Children.toArray(props.children)}
-                        </ContentContext.Provider>
+                        <TinaPageProvider pageId={match.params.pageId}>{React.Children.toArray(props.children)}</TinaPageProvider>
                     )} />
                     <Route path="/listing/:listingId" render={({match}) => (
                         <ContentContext.Provider value={mockListingsData[match.params.listingId] || mockListingsData[0]}>
@@ -64,6 +63,7 @@ ReactDOM.render(
         <CMSProvider
             init={() => cmsFromStores(
                 new LocalStorageStore<Post>("__posts"),
+                new LocalStorageStore<Post>("__pages"),
                 new LocalStorageStore<Author>("__authors")
             )}
         >

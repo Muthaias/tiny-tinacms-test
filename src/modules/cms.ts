@@ -2,7 +2,7 @@ import {TinaCMS} from "tinacms";
 import {postCreator} from "./plugins";
 import {DataStore, Author, Post} from "./datastore";
 
-export function cmsFromStores(postStore: DataStore<Post>, authorStore: DataStore<Author>): TinaCMS {
+export function cmsFromStores(postStore: DataStore<Post>, pageStore: DataStore<Post>, authorStore: DataStore<Author>): TinaCMS {
     const cms = new TinaCMS();
     cms.plugins.add(
         postCreator({
@@ -31,5 +31,6 @@ export function cmsFromStores(postStore: DataStore<Post>, authorStore: DataStore
 
     cms.registerApi("authors", authorStore);
     cms.registerApi("posts", postStore);
+    cms.registerApi("pages", pageStore);
     return cms;
 }
