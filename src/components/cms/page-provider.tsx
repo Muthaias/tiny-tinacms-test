@@ -31,14 +31,14 @@ export const TinaPageProvider: React.SFC<{pageId: string, children: any}> = ({pa
 
     if (post === undefined) return null;
 
-    const postData: ContentData = {
-        type: ContentType.Post,
+    const pageData: ContentData = {
+        type: ContentType.Page,
         title: post.title,
         content: post.content,
         headerImage: post.imageUrl,
-    }
+    };
     return (
-        <ContentContext.Provider value={postData}>
+        <ContentContext.Provider value={pageData}>
             {React.Children.toArray(children)}
         </ContentContext.Provider>
     )

@@ -31,7 +31,7 @@ export const Menu: React.SFC<MenuProps> = function ({items}: MenuProps) {
     return (
         <MenuWrapper>
             {items.map(item => (
-                <MenuItem key={item.key}>
+                <MenuItem key={item.key} onClick={item.onClick}>
                     {item.label}
                 </MenuItem>
             ))}

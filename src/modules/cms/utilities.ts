@@ -1,12 +1,17 @@
 import {TinaCMS} from "tinacms";
-import {postCreator} from "../plugins";
-import {DataStore, Author, Post} from "../datastore";
+import {postCreator, menuCreator} from "../plugins";
+import {DataStore, Author, Post, Menu, DataSearch} from "../datastore";
 
-export function cmsFromStores(postStore: DataStore<Post>, pageStore: DataStore<Post>, authorStore: DataStore<Author>): TinaCMS {
+export function cmsFromStores(
+    postStore: DataStore<Post>,
+    pageStore: DataStore<Post>,
+    menuStore: DataStore<Menu> & DataSearch<Menu>,
+    authorStore: DataStore<Author>,
+): TinaCMS {
     const cms = new TinaCMS();
     cms.plugins.add(
         postCreator({
-            name: "Add Basic Post",
+            name: "Add Post",
             onSubmit: (values) => {
                 return postStore.add({
                     title: values.title || "Untitled post",
@@ -18,12 +23,24 @@ export function cmsFromStores(postStore: DataStore<Post>, pageStore: DataStore<P
     );
     cms.plugins.add(
         postCreator({
-            name: "Add Special Post",
+            name: "Add Page",
             onSubmit: (values) => {
-                return postStore.add({
-                    title: values.title || "Untitled post",
+                return pageStore.add({
+                    title: values.title || "Untitled page",
                     type: "basic",
                     content: "",
+                });
+            }
+        })
+    );
+    cms.plugins.add(
+        menuCreator({
+            name: "Add Menu",
+            onSubmit: (values) => {
+                return menuStore.add({
+                    name: values.name || "Untitled menu",
+                    entries: [],
+                    tags: [],
                 });
             }
         })
@@ -32,5 +49,6 @@ export function cmsFromStores(postStore: DataStore<Post>, pageStore: DataStore<P
     cms.registerApi("authors", authorStore);
     cms.registerApi("posts", postStore);
     cms.registerApi("pages", pageStore);
+    cms.registerApi("menu", menuStore);
     return cms;
 }
