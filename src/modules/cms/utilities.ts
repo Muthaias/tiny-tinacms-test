@@ -1,6 +1,6 @@
 import {TinaCMS} from "tinacms";
-import {postCreator} from "./plugins";
-import {DataStore, Author, Post} from "./datastore";
+import {postCreator} from "../plugins";
+import {DataStore, Author, Post} from "../datastore";
 
 export function cmsFromStores(postStore: DataStore<Post>, pageStore: DataStore<Post>, authorStore: DataStore<Author>): TinaCMS {
     const cms = new TinaCMS();

@@ -10,7 +10,7 @@ import {
     Post,
 } from "../../modules/datastore";
 
-import {usePosts} from "../../modules/cms-hooks";
+import {usePosts} from "../../modules/cms";
 
 import {
     ContentContext,

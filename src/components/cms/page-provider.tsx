@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import {usePages} from "../../modules/cms-hooks";
+import {usePages} from "../../modules/cms";
 
 import {
     ContentContext,

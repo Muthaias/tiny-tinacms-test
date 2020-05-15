@@ -3,12 +3,18 @@ import {useMemo} from "react";
 import * as ReactDOM from "react-dom";
 import {TinaCMS, TinaProvider} from "tinacms";
 
-import {cmsFromStores} from "./modules/cms";
+import {
+    cmsFromStores,
+} from "./modules/cms";
+import {
+    PostSelector,
+    PageSelector,
+} from "./components/cms";
 import {Application} from "./components/application";
 import {
     LocalStorageStore,
     Post,
-    Author
+    Author,
 } from "./modules/datastore";
 import {
     MenuContext,
@@ -32,9 +38,12 @@ import {
 
 const CMSProvider: React.FunctionComponent<{init: () => TinaCMS, children}> = (props) => {
     const cms = useMemo(props.init, []);
+
     return (
         <MenuContext.Provider value={mockMenuData}>
             <TinaProvider cms={cms}>
+                <PostSelector />
+                <PageSelector />
                 <Switch>
                     <Route path="/post/:postId" render={({match}) => (
                         <TinaPostProvider postId={match.params.postId}>{React.Children.toArray(props.children)}</TinaPostProvider>

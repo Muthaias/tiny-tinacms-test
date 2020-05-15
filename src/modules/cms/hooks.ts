@@ -1,6 +1,6 @@
 import {useCMS} from "tinacms";
 
-import {DataStore, Post, Author} from "./datastore";
+import {DataStore, Post, Author} from "../datastore";
 
 function assertApi<T>(id: string): T {
     const cms = useCMS();
