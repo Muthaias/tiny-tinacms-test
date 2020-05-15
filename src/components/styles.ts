@@ -2,9 +2,10 @@ import { createGlobalStyle, css } from "styled-components";
 
 const theme = css`
     :root {
-        --theme-padding-big: 30px;
-        --theme-padding-medium: 20px;
         --theme-padding-small: 10px;
+        --theme-padding-medium: 20px;
+        --theme-padding-big: 30px;
+        --theme-padding-huge: 60px;
 
         --theme-width-max: 1200px;
         --theme-height-header: 300px;
@@ -12,7 +13,8 @@ const theme = css`
         --theme-header-image-size: 100%;
     
         --theme-font-family: verdana, "DejaVu Sans", "Bitstream Vera Sans";
-        --theme-font-size-normal: 12px;
+        --theme-font-size-small: 12px;
+        --theme-font-size-medium: 18px;
         --theme-font-size-big: 24px;
 
         --theme-header-text-background: rgba(0, 0, 0, 0.6);

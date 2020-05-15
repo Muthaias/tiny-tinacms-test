@@ -5,9 +5,9 @@ import styled from "styled-components";
 import {useContent, ContentData, ContentType} from "../contexts/content";
 
 const ContentWrapper = styled.div`
-    padding: var(--theme-padding-big);
+    padding: var(--theme-padding-big) var(--theme-padding-huge);
     font-family: var(--theme-font-family);
-    font-size: var(--theme-font-size-normal);
+    font-size: var(--theme-font-size-medium);
     background: var(--theme-color-content-background);
     min-height: calc(100vh - var(--theme-height-header));
 `
@@ -21,6 +21,7 @@ const Header = styled.div`
     background-size: auto var(--theme-header-image-size);
     width: 100%;
     height: var(--theme-height-header);
+    font-size: var(--theme-font-size-small);
 `
 
 const ContentTitle = styled.div`
