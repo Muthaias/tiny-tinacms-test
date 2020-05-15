@@ -23,7 +23,7 @@ export const mockPostsData: PostData[] = [
     {
         type: ContentType.Post,
         title: "Hello world!",
-        content: "",
+        content: "There's currently no post available here!",
         headerImage: mockImageUrl,
     },
     {
@@ -38,7 +38,7 @@ export const mockPagesData: PageData[] = [
     {
         type: ContentType.Page,
         title: "Hello world!",
-        content: "",
+        content: "There's currently no page available here!",
         headerImage: mockImageUrl,
     },
 ];
