@@ -11,3 +11,13 @@ export type Author = {
     name: string;
     index?: number;
 }
+
+export type MenuEntry = {
+    name: string;
+    link?: string;
+    entries: MenuEntry[];
+}
+
+export type Menu = MenuEntry & {
+    tags: string[];
+};

@@ -1,6 +1,5 @@
 import * as React from "react";
 import {
-    useCMS,
     useScreenPlugin,
 } from "tinacms";
 import {useHistory} from "react-router-dom";

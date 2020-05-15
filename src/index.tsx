@@ -15,17 +15,17 @@ import {
     LocalStorageStore,
     Post,
     Author,
+    Menu,
 } from "./modules/datastore";
 import {
-    MenuContext,
     ContentContext,
 } from "./contexts";
 import {
     TinaPostProvider,
     TinaPageProvider,
+    TinaMenuProvider,
 } from "./components/cms";
 import {
-    mockMenuData,
     mockPagesData,
     mockListingsData,
 } from "./modules/mock-data";
@@ -33,15 +33,17 @@ import {
     HashRouter as Router,
     Route,
     Switch,
+    useRouteMatch,
 } from "react-router-dom";
 
 
 const CMSProvider: React.FunctionComponent<{init: () => TinaCMS, children}> = (props) => {
     const cms = useMemo(props.init, []);
+    const routeMatch = useRouteMatch<{menuId: string}>("/menu/:menuId");
 
     return (
-        <MenuContext.Provider value={mockMenuData}>
-            <TinaProvider cms={cms}>
+        <TinaProvider cms={cms}>
+            <TinaMenuProvider menuId={routeMatch?.params.menuId || "Main"}>
                 <PostSelector />
                 <PageSelector />
                 <Switch>
@@ -62,8 +64,8 @@ const CMSProvider: React.FunctionComponent<{init: () => TinaCMS, children}> = (p
                         </ContentContext.Provider>
                     )} />
                 </Switch>
-            </TinaProvider>
-        </MenuContext.Provider>
+            </TinaMenuProvider>
+        </TinaProvider>
     );
 }
 
@@ -73,6 +75,7 @@ ReactDOM.render(
             init={() => cmsFromStores(
                 new LocalStorageStore<Post>("__posts"),
                 new LocalStorageStore<Post>("__pages"),
+                new LocalStorageStore<Menu>("__menu"),
                 new LocalStorageStore<Author>("__authors")
             )}
         >
