@@ -39,7 +39,7 @@ export class LocalStorageStore<T> implements DataStore<T>, DataSearch<T, SearchQ
             case "and":
                 return query.queries.reduce((acc, q) => this._search(acc, q), entries);
             case "property":
-                return entries.filter(entry => entry[query.propertyId]);
+                return entries.filter(entry => String(entry[query.propertyId]).match(query.criteria));
         }
     }
 
