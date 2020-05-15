@@ -15,7 +15,7 @@ const theme = css`
         --theme-font-size-normal: 12px;
         --theme-font-size-big: 24px;
 
-        --theme-header-text-background: rgba(0, 0, 0, 0.9);
+        --theme-header-text-background: rgba(0, 0, 0, 0.6);
         --theme-header-text-color: #fff;
 
         --theme-color-background: #eee;
