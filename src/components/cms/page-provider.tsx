@@ -8,13 +8,11 @@ import {
     ContentData,
 } from "../../contexts";
 
-import {
-    usePostForm
-} from "./post-provider";
+import {useContentForm} from "./utilities";
 
 export const TinaPageProvider: React.SFC<{pageId: string, children: any}> = ({pageId, children}) => {
     const pagesApi = usePages();
-    const post = usePostForm(
+    const post = useContentForm(
         pageId,
         () => pagesApi.get({id: pageId}),
         ({title, content, imageUrl}: {title: string, content: string, imageUrl?: string}) => {
@@ -27,7 +25,8 @@ export const TinaPageProvider: React.SFC<{pageId: string, children: any}> = ({pa
                 });
             }
             return Promise.resolve();
-        }
+        },
+        "Page content"
     );
 
     if (post === undefined) return null;
