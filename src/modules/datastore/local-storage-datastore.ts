@@ -1,6 +1,7 @@
 import {Entry, DataStore} from "./datastore";
+import {DataSearch, SearchQuery, QueryDescriptor} from "./datasearch";
 
-export class LocalStorageStore<T> implements DataStore<T> {
+export class LocalStorageStore<T> implements DataStore<T>, DataSearch<T, SearchQuery<keyof T>> {
     private _targetId: string;
     private _cache: Map<string, Entry & T> = new Map<string, Entry & T>();
     private _cacheTime: string = "__nocache";
@@ -9,6 +10,37 @@ export class LocalStorageStore<T> implements DataStore<T> {
 
     constructor(targetId: string) {
         this._targetId = targetId;
+    }
+
+    public async search(query: SearchQuery<keyof T>) {
+        return Promise.resolve(
+            this._search(this.entries, query)
+        );
+    }
+
+    public async first(query: SearchQuery<keyof T>) {
+        const result = await this.search(query);
+        return Promise.resolve(result[0]);
+    }
+
+    public availableQueries() {
+        const queries: QueryDescriptor<SearchQuery<keyof T>>[] = [
+            {type: "or"},
+            {type: "and"},
+            {type: "property"},
+        ];
+        return Promise.resolve(queries);
+    }
+
+    private _search(entries: (Entry & T)[], query: SearchQuery<keyof T>) {
+        switch (query.type) {
+            case "or":
+                return entries.filter(entry => query.queries.some(q => this._search([entry], q).length > 0));
+            case "and":
+                return query.queries.reduce((acc, q) => this._search(acc, q), entries);
+            case "property":
+                return entries.filter(entry => entry[query.propertyId]);
+        }
     }
 
     public get entries(): (Entry & T)[] {
