@@ -13,6 +13,7 @@ export interface AndQuery<Q extends BaseQuery<any>> extends BaseQuery<"and"> {
 export interface PropertyQuery<T = string> extends BaseQuery<"property"> {
     propertyId: T;
     criteria: string;
+    partial?: boolean;
 }
 
 export type SearchQuery<P = string> = (
@@ -25,12 +26,8 @@ export interface QueryDescriptor<T extends {type: any}> {
     type: T["type"],
 }
 
-export interface DataSearch<T, Q extends {type: any} = SearchQuery> {
+export interface DataSearch<T, Q extends {type: any} = SearchQuery<keyof T>> {
     search(query: Q): Promise<T[]>;
     first(query: Q): Promise<T>;
     availableQueries(): Promise<QueryDescriptor<Q>[]>;
-}
-
-export type Entry = {
-    id: string;
 }
