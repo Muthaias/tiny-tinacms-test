@@ -137,7 +137,9 @@ export const TinaMenuProvider: React.SFC<MenuProviderProps> = ({menuId, children
         items: menu.entries.map((entry, index) => ({
             label: entry.name,
             key: entry.name + "-" + index,
-            onClick: () => entry.link && history.push(entry.link),
+            onClick: entry.link ? (
+                () => entry.link && history.push(entry.link)
+            ) : undefined,
         })),
     } : {
         items: []
