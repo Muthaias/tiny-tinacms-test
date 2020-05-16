@@ -63,7 +63,7 @@ export function cmsFromStores(
                     authors: authorStore.entries,
                     posts: postStore.entries,
                     pages: pageStore.entries,
-                    menu: menuStore.entries,
+                    menus: menuStore.entries,
                 }
                 downloadObject(data, values.name);
             }
