@@ -9,6 +9,11 @@ module.exports = (env) => {
         mode: env.production ? "production" : "development",
         watch: env.production ? false : true,
 
+        entry: {
+            admin: "./src/admin.tsx",
+            main: "./src/index.tsx",
+        },
+
         // Enable sourcemaps for debugging webpack's output.
         devtool: "source-map",
 
@@ -44,6 +49,7 @@ module.exports = (env) => {
         plugins: [
             new CopyPlugin([
                 { from: "./index.html", to: "./index.html" },
+                { from: "./admin.html", to: "./admin.html" },
                 { from: "./node_modules/react/umd/react." + reactLib + ".js", to: "./vendor/react.js" },
                 { from: "./node_modules/react-dom/umd/react-dom." + reactLib + ".js", to: "./vendor/react-dom.js" },
             ]),
