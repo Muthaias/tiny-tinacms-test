@@ -2,6 +2,16 @@ import {TinaCMS} from "tinacms";
 import {postCreator, menuCreator} from "../plugins";
 import {DataStore, Author, Post, Menu, DataSearch} from "../datastore";
 
+export function downloadObject(object: Object, name: string) {
+    const dataString = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(object, undefined, '    '));
+    const anchor = document.createElement('a');
+    anchor.setAttribute('href', dataString);
+    anchor.setAttribute('download', name + '.json');
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+}
+
 export function cmsFromStores(
     postStore: DataStore<Post>,
     pageStore: DataStore<Post>,
@@ -42,6 +52,20 @@ export function cmsFromStores(
                     entries: [],
                     tags: [],
                 });
+            }
+        })
+    );
+    cms.plugins.add(
+        menuCreator({
+            name: "Dump data",
+            onSubmit: async (values) => {
+                const data = {
+                    authors: authorStore.entries,
+                    posts: postStore.entries,
+                    pages: pageStore.entries,
+                    menu: menuStore.entries,
+                }
+                downloadObject(data, values.name);
             }
         })
     );
