@@ -50,6 +50,7 @@ module.exports = (env) => {
             new CopyPlugin([
                 { from: "./index.html", to: "./index.html" },
                 { from: "./admin.html", to: "./admin.html" },
+                { from: "./data/data.json", to: "./data/data.json" },
                 { from: "./node_modules/react/umd/react." + reactLib + ".js", to: "./vendor/react.js" },
                 { from: "./node_modules/react-dom/umd/react-dom." + reactLib + ".js", to: "./vendor/react-dom.js" },
             ]),

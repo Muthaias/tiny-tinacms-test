@@ -1,6 +1,6 @@
 import {TinaCMS} from "tinacms";
 import {postCreator, menuCreator} from "../plugins";
-import {DataStore, Author, Post, Menu, DataSearch} from "../datastore";
+import {EntryStore, Author, Post, Menu, DataSearch} from "../datastore";
 
 export function downloadObject(object: Object, name: string) {
     const dataString = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(object, undefined, '    '));
@@ -13,10 +13,10 @@ export function downloadObject(object: Object, name: string) {
 }
 
 export function cmsFromStores(
-    postStore: DataStore<Post>,
-    pageStore: DataStore<Post>,
-    menuStore: DataStore<Menu> & DataSearch<Menu>,
-    authorStore: DataStore<Author>,
+    postStore: EntryStore<Post>,
+    pageStore: EntryStore<Post>,
+    menuStore: EntryStore<Menu> & DataSearch<Menu>,
+    authorStore: EntryStore<Author>,
 ): TinaCMS {
     const cms = new TinaCMS();
     cms.plugins.add(
@@ -59,11 +59,15 @@ export function cmsFromStores(
         menuCreator({
             name: "Dump data",
             onSubmit: async (values) => {
+                const authors = authorStore.getEntries();
+                const posts = postStore.getEntries();
+                const pages = pageStore.getEntries();
+                const menus = menuStore.getEntries();
                 const data = {
-                    authors: authorStore.entries,
-                    posts: postStore.entries,
-                    pages: pageStore.entries,
-                    menus: menuStore.entries,
+                    authors,
+                    posts,
+                    pages,
+                    menus,
                 }
                 downloadObject(data, values.name);
             }

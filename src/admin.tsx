@@ -6,7 +6,7 @@ import {
 } from "./modules/cms";
 import {Application} from "./components/application";
 import {
-    LocalStorageStore,
+    GenericEntryStore,
     Post,
     Author,
     Menu,
@@ -20,10 +20,10 @@ ReactDOM.render(
     <Router>
         <CMSProvider
             init={() => cmsFromStores(
-                new LocalStorageStore<Post>("__posts"),
-                new LocalStorageStore<Post>("__pages"),
-                new LocalStorageStore<Menu>("__menu"),
-                new LocalStorageStore<Author>("__authors")
+                GenericEntryStore.fromTargetId<Post>("__posts"),
+                GenericEntryStore.fromTargetId<Post>("__pages"),
+                GenericEntryStore.fromTargetId<Menu>("__menu"),
+                GenericEntryStore.fromTargetId<Author>("__authors")
             )}
         >
             <Application />

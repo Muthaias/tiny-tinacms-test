@@ -16,12 +16,13 @@ export const PostSelector: React.SFC = () => {
     const history = useHistory();
     const entrySelection = useEntrySelection<Entry & Post>("Post selection", {
         getEntries: async (start: number, end: number) => {
-            return postsApi.entries.slice(start, end).map(post => ({
+            const entries = await postsApi.getEntries(start, end - start);
+            return entries.map(post => ({
                 label: post.title,
                 entry: post,
             }));
         },
-        count: async () => postsApi.entries.length,
+        count: async () => (await postsApi.getEntries()).length,
         viewEntry: (entry) => {
             history.push("/post/" + entry.entry.id);
         },
@@ -36,12 +37,13 @@ export const PageSelector: React.SFC = () => {
     const history = useHistory();
     const entrySelection = useEntrySelection<Entry & Post>("Page selection", {
         getEntries: async (start: number, end: number) => {
-            return pagesApi.entries.slice(start, end).map(page => ({
-                label: page.title,
-                entry: page,
+            const entries = await pagesApi.getEntries(start, end - start);
+            return entries.map(post => ({
+                label: post.title,
+                entry: post,
             }));
         },
-        count: async () => pagesApi.entries.length,
+        count: async () => (await pagesApi.getEntries()).length,
         viewEntry: (entry) => {
             history.push("/page/" + entry.entry.id);
         },

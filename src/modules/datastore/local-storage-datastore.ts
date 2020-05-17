@@ -1,20 +1,45 @@
-import {Entry, DataStore} from "./datastore";
+import {Entry, EntryStore, DataStore} from "./datastore";
 import {DataSearch, SearchQuery, QueryDescriptor} from "./datasearch";
+import {StaticDataStore, LocalStorageDataStore, StaticWebDataStore} from "./datastores";
 
-export class LocalStorageStore<T> implements DataStore<T>, DataSearch<T, SearchQuery<keyof T>> {
-    private _targetId: string;
-    private _cache: Map<string, Entry & T> = new Map<string, Entry & T>();
-    private _cacheTime: string = "__nocache";
-    private _listeners: ((store: DataStore<T>) => void)[] = [];
+export class GenericEntryStore<T> implements EntryStore<T>, DataSearch<T, SearchQuery<keyof T>> {
+    private _idPrefix: string;
+    private _map: Map<string, Entry & T> | null = null;
+    private _listeners: ((store: EntryStore<T>) => void)[] = [];
     private _triggerPromise: Promise<any> | null = null;
+    private _store: DataStore<(Entry & T)[]>;
 
-    constructor(targetId: string) {
-        this._targetId = targetId;
+    constructor(idPrefix: string, store: DataStore<(Entry & T)[]>) {
+        this._store = store;
+        this._idPrefix = idPrefix;
+    }
+
+    public static fromTargetId<E>(targetId: string) {
+        return new GenericEntryStore<E>(
+            targetId,
+            new LocalStorageDataStore<(Entry & E)[]>(targetId, []),
+        );
+    }
+
+    public static fromData<E>(targetId: string, data: (Entry & E)[] = []) {
+        return new GenericEntryStore<E>(
+            targetId,
+            new StaticDataStore<(Entry & E)[]>(data),
+        );
+    }
+
+    public static fromWebData<E>(targetId: string, path: string, transform?: (data: any) => (Entry & E)[]) {
+        return new GenericEntryStore<E>(
+            targetId,
+            new StaticWebDataStore<(Entry & E)[]>(path, [], transform),
+        );
     }
 
     public async search(query: SearchQuery<keyof T>) {
+        const map = await this._loadMap();
+        const entries = Array.from(map.values());
         return Promise.resolve(
-            this._search(this.entries, query)
+            this._search(entries, query)
         );
     }
 
@@ -48,24 +73,31 @@ export class LocalStorageStore<T> implements DataStore<T>, DataSearch<T, SearchQ
         }
     }
 
-    public get entries(): (Entry & T)[] {
-        return Array.from(this._map.values());
-    }
-
     async get(entry: Entry): Promise<Entry & T> {
-        const e = this._map.get(entry.id);
+        const map = await this._loadMap();
+        const e = map.get(entry.id);
         if (e === undefined) throw new Error("No entry with id: " + entry.id);
         return e;
     }
 
+    async getEntries(offset: number = 0, count?: number): Promise<(Entry & T)[]> {
+        const map = await this._loadMap();
+        const entries = Array.from(map.values());
+        const start = Math.min(offset, entries.length);
+        const finalCount = count === undefined ? entries.length : count;
+        const end = Math.min(offset + finalCount, entries.length);
+        return entries.slice(start, end);
+    }
+
     async add(data: T): Promise<Entry & T> {
+        const map = await this._loadMap();
         const entry: Entry & T = {
             ...data,
-            id: this._targetId + ":" + Date.now(),
-            index: this._map.size,
+            id: this._idPrefix + ":" + Date.now(),
+            index: map.size,
         }
-        this._map.set(entry.id, entry);
-        this._entries = this.entries;
+        map.set(entry.id, entry);
+        this._save(map);
         return entry;
     }
 
@@ -75,39 +107,28 @@ export class LocalStorageStore<T> implements DataStore<T>, DataSearch<T, SearchQ
             ...oldEntry,
             ...entry
         } as unknown as Entry & T;
-        this._map.set(entry.id, newEntry);
-        this._entries = this.entries;
+        const map = await this._loadMap();
+        map.set(entry.id, newEntry);
+        this._save(map);
     }
 
     async remove(entry: Entry) {
-        this._map.delete(entry.id);
-        this._entries = this.entries;
+        const map = await this._loadMap();
+        map.delete(entry.id);
+        this._save(map);
     }
 
-    onChange(update: (store: DataStore<T>) => void) {
+    onChange(update: (store: EntryStore<T>) => void) {
         this.offChange(update);
         this._listeners.push(update);
     }
 
-    offChange(update: (store: DataStore<T>) => void) {
+    offChange(update: (store: EntryStore<T>) => void) {
         this._listeners = this._listeners.filter(l => l !== update);
     }
 
-    private get _map(): Map<string, Entry & T> {
-        if (this._cache && this._cacheTime === window.localStorage.getItem(this._targetId + "cache_time")) {
-            return this._cache;
-        }
-        this._cache = this._entries.reduce((acc, value) => {
-            acc.set(value.id, value);
-            return acc;
-        }, new Map<string, Entry & T>());
-        this._cacheTime = Date.now() + "";
-        window.localStorage.setItem(this._targetId + "cache_time", this._cacheTime);
-        return this._cache;
-    }
-
-    private set _entries(data: (Entry & T)[]) {
-        window.localStorage.setItem(this._targetId, JSON.stringify(data));
+    private _save(map: Map<string, Entry & T>) {
+        this._store.store(Array.from(map.values()));
         if (!this._triggerPromise) {
             this._triggerPromise = Promise.resolve().then(() => {
                 this._listeners.forEach(l => l(this));
@@ -116,7 +137,14 @@ export class LocalStorageStore<T> implements DataStore<T>, DataSearch<T, SearchQ
         }
     }
 
-    private get _entries(): (Entry & T)[] {
-        return JSON.parse(window.localStorage.getItem(this._targetId) || "[]");
+    private async _loadMap(): Promise<Map<string, Entry & T>> {
+        if (!this._map) {
+            const data = await this._store.load();
+            this._map = data.reduce((acc, value) => {
+                acc.set(value.id, value);
+                return acc;
+            }, new Map<string, Entry & T>());
+        }
+        return this._map;
     }
 }

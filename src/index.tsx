@@ -8,9 +8,11 @@ import {
     useRouteMatch,
 } from "react-router-dom";
 import {
-    Entry,
     Post,
     Menu,
+    EntryRead,
+    DataSearch,
+    GenericEntryStore,
 } from "./modules/datastore";
 import {
     MenuContext,
@@ -22,57 +24,65 @@ import {
 import {
     mockPostsData,
 } from "./modules/mock-data";
-import Data from "../data/data.json";
 
-type DataHack = any;
-interface Data {
-    posts: (Entry & Post)[];
-    pages: (Entry & Post)[];
-    menus: (Entry & Menu)[];
+interface Streams {
+    posts: DataStream<Post>;
+    pages: DataStream<Post>;
+    menus: DataStream<Menu>;
 }
-const DataProvider: React.SFC<{data: Data, children}> = ({data, children}) => {
+type DataStream<T> = EntryRead<T> & DataSearch<T>;
+const DataProvider: React.SFC<{streams: Streams, menuId: string, children}> = ({streams, menuId, children}) => {
     const history = useHistory();
-    const postMap = React.useMemo(() => (
-        data.posts.reduce<{[id: string]: Post}>((acc, post) => {
-            acc[post.id] = post;
-            return acc;
-        }, {})
-    ), [data]);
-    const pageMap = React.useMemo(() => (
-        data.pages.reduce<{[id: string]: Post}>((acc, post) => {
-            acc[post.id] = post;
-            return acc;
-        }, {})
-    ), [data]);
-    const menuMap = React.useMemo(() => (
-        data.menus.reduce<{[name: string]: Menu}>((acc, menu) => {
-            acc[menu.name] = menu;
-            return acc;
-        },{})
-    ), [data]);
-    const menuContent = menuMap["Main"];
-    const mainMenu: MenuData = menuContent ? {
-        items: menuContent.entries.map((entry, index) => ({
-            key: entry.name + ":" + index,
-            label: entry.name,
-            onClick: () => entry.link && history.push(entry.link),
-        })),
-    } : {items: []};
+    const [mainMenu, setMainMenu] = React.useState<MenuData>({items: []});
+    const [content, setContent] = React.useState<ContentData>(mockPostsData[0]);
+
+    React.useEffect(() => {
+        streams.menus.first({
+            type: "property",
+            propertyId: "name" as "name",
+            criteria: menuId,
+        }).then(menuContent => {
+            setMainMenu(menuContent ? {
+                items: menuContent.entries.map((entry, index) => ({
+                    key: entry.name + ":" + index,
+                    label: entry.name,
+                    onClick: () => entry.link && history.push(entry.link),
+                })),
+            } : {items: []});
+        });
+    }, [menuId, streams]);
 
     const pageMatch = useRouteMatch<{id: string}>("/page/:id");
     const postMatch = useRouteMatch<{id: string}>("/post/:id");
-    const selectedContent = (pageMatch ? (
-        pageMap[pageMatch.params.id]
-    ) : (
-        postMatch ? (
-            postMap[postMatch.params.id]
-        ) : undefined
-    ));
-    const content: ContentData = selectedContent ? {
-        type: ContentType.Post,
-        content: selectedContent.content,
-        title: selectedContent.title,
-    } : mockPostsData[0];
+    const pageId = pageMatch && pageMatch.params.id;
+    const postId = postMatch && postMatch.params.id;
+
+    React.useEffect(() => {
+        (async () => {
+            try {
+                if (pageId) {
+                    const pageData = await streams.pages.get({id: pageId});
+                    setContent({
+                        type: ContentType.Page,
+                        content: pageData.content,
+                        title: pageData.title,
+                        headerImage: pageData.imageUrl,
+                    });
+                } else if (postId) {
+                    const postData = await streams.posts.get({id: postId});
+                    setContent({
+                        type: ContentType.Page,
+                        content: postData.content,
+                        title: postData.title,
+                        headerImage: postData.imageUrl,
+                    });
+                }
+            } catch (e) {
+                console.warn("Failed to load page: ", e, pageMatch, postMatch);
+                setContent(mockPostsData[0]);
+            }
+        })();
+    }, [pageId, postId, streams]);
 
     return (
         <MenuContext.Provider value={mainMenu}>
@@ -83,9 +93,14 @@ const DataProvider: React.SFC<{data: Data, children}> = ({data, children}) => {
     )
 }
 
+const DataStreams = {
+    posts: GenericEntryStore.fromWebData<Post>("__posts", "data/data.json", (data) => data.posts || []),
+    pages: GenericEntryStore.fromWebData<Post>("__pages", "data/data.json", (data) => data.pages || []),
+    menus: GenericEntryStore.fromWebData<Menu>("__menu", "data/data.json", (data) => data.menus || []),
+};
 ReactDOM.render(
     <Router>
-        <DataProvider data={Data as DataHack} >
+        <DataProvider streams={DataStreams} menuId={"Main"}>
             <Application />
         </DataProvider>
     </Router>,

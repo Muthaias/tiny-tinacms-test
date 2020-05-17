@@ -1,7 +1,7 @@
 import {useCMS} from "tinacms";
 
 import {
-    DataStore,
+    EntryStore,
     DataSearch,
     Post,
     Author,
@@ -16,18 +16,18 @@ function assertApi<T>(id: string): T {
     return api;
 }
 
-export function usePosts(): DataStore<Post> {
-    return assertApi<DataStore<Post>>("posts");
+export function usePosts(): EntryStore<Post> {
+    return assertApi<EntryStore<Post>>("posts");
 }
 
-export function usePages(): DataStore<Post> {
-    return assertApi<DataStore<Post>>("pages");
+export function usePages(): EntryStore<Post> {
+    return assertApi<EntryStore<Post>>("pages");
 }
 
-export function useAuthors(): DataStore<Author> {
-    return assertApi<DataStore<Author>>("author");
+export function useAuthors(): EntryStore<Author> {
+    return assertApi<EntryStore<Author>>("author");
 }
 
-export function useMenus(): DataStore<Menu> & DataSearch<Entry & Menu> {
-    return assertApi<DataStore<Menu> & DataSearch<Entry & Menu>>("menu");
+export function useMenus(): EntryStore<Menu> & DataSearch<Entry & Menu> {
+    return assertApi<EntryStore<Menu> & DataSearch<Entry & Menu>>("menu");
 }

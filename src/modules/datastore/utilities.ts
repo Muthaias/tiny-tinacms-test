@@ -1,9 +1,9 @@
 import {useEffect} from "react";
-import {DataStore, Entry} from "./datastore";
+import {EntryStore, Entry} from "./datastore";
 
 export function useStoreUpdate<T>(
-    store: DataStore<T>,
-    callback: (store: DataStore<T>) => void,
+    store: EntryStore<T>,
+    callback: (store: EntryStore<T>) => void,
     deps: any[],
 ) {
     useEffect(() => {
