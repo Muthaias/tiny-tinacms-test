@@ -45,7 +45,7 @@ async function generateMockPosts(idPrefix = "post", numberOfPosts = 5) {
         const data = await fetch("http://loripsum.net/api/3/medium/headers");
         const text = await data.text();
         const content = htmlToMd(text);
-        const title = firstHeader(content).slice(0, 12);
+        const title = firstHeader(content);
         const imageUrl = imageUrls[Math.floor((imageUrls.length - 1) * Math.random())] + "?auto=format&fit=crop&w=1500&h=300&q=80";
         posts.push({
             id: idPrefix + "_" + p,
@@ -65,7 +65,7 @@ async function saveMockData() {
         {
             "name": "Main",
             "entries": pages.map(page => ({
-                name: page.title,
+                name: page.title.split(" ").slice(0,3).join(" "),
                 key: page.id,
                 link: "/page/" + page.id,
             })),
