@@ -19,6 +19,8 @@ This project has seen some extreme feature creap in order to try out `TinaCMS` f
 
 ## Running
 The result will be hosted on `localhost:5000` by default.
+* Admin endpoint can be reached at `localhost:5000/admin.html`
+* User endpoint can be reached at `localhost:5000/index.html`
 
 ### Development
 ```
