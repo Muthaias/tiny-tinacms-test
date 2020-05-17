@@ -22,6 +22,7 @@ const Header = styled.div`
     width: 100%;
     height: var(--theme-height-header);
     font-size: var(--theme-font-size-small);
+    text-align: center;
 `
 
 const ContentTitle = styled.div`
