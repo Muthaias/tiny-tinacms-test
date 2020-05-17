@@ -34,6 +34,17 @@ npm run build
 npm run serve
 ```
 
+## Backend?
+This implementation has no specific backend solution. The system builds two relevant artifacts, the `admin` part and the `user` part.
+
+By default the admin system stores data to local storage and enables you to dump the data from the menu. This data is dumped using a json format that by default can be loaded into the user system.
+
+To load data into the user system do the following:
+* Edit and save data in the cms system
+* Find and press the `Dump data` action in the cms sidebar
+* Save the dumped data to `data/data.json`
+* Run build step. See `Production` or `Development`
+
 ## Notes
 * Dependencies are tricky and `yarn` will help you solve this
 * The build size is huge but this is outside the scope of this project
