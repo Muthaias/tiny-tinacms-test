@@ -26,7 +26,7 @@ const imageUrls = [
 function htmlToMd(content) {
     content = content.replace(/\<h(\d)\>(.*?)\<\/h\d\>/g, (match, header, content) => {
         const headerType = parseInt(header);
-        return "# ".repeat(headerType) + content;
+        return "#".repeat(headerType) + " " + content;
     });
     content = content.replace(/<p>(.*?)<\/p>/g, (match, content) => {
         return content + "\n\n";
