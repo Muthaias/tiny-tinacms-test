@@ -37,5 +37,15 @@ const theme = css`
 `
 
 export const ThemeStyles = createGlobalStyle`
-  ${theme};
+    ${theme};
 `
+type DeviceIds = "mobile" | "tablet" | "desktop";
+
+export const Devices: Record<DeviceIds, string> = ["mobile", "tablet", "desktop"].reduce((acc, key) => {
+    acc[key] = `(min-width: ${acc[key]})`;
+    return acc;
+}, {
+    mobile: "425px",
+    tablet: "1024px",
+    desktop: "1920px",
+});
