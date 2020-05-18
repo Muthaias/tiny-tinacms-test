@@ -124,7 +124,10 @@ export const Menu: React.SFC<MenuProps> = function ({items}: MenuProps) {
         <>
             <MenuWrapper className={"menu-wrapper" + (open ? " open" : "")}>
                 {items.map(item => (
-                    <MenuItem key={item.key} onClick={item.onClick}>
+                    <MenuItem key={item.key} onClick={() => {
+                        item.onClick && item.onClick();
+                        setOpen(false);
+                    }}>
                         {item.label}
                     </MenuItem>
                 ))}
