@@ -4,14 +4,18 @@ import styled from "styled-components";
 import {Main} from "./main";
 import {Menu} from "../components/menu";
 import {useMenu} from "../contexts/menu";
-import {ThemeStyles} from "./styles";
+import {ThemeStyles, Devices} from "./styles";
 
 const MenuContainer = styled.div`
     position: absolute;
-    top: var(--theme-padding-big);
+    top: 0;
     left: 0;
     width: 100%;
     z-index: 1;
+    @media ${Devices.tablet} {
+        top: var(--theme-padding-big);
+        left: 0;
+    }
 `;
 
 const ApplicationContainer = styled.div`

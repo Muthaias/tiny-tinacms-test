@@ -5,7 +5,7 @@ import {MenuData} from "../contexts/menu";
 import {Devices} from "./styles";
 
 const MenuWrapper = styled.div`
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -18,7 +18,7 @@ const MenuWrapper = styled.div`
     transition: height 0.1s;
 
     &.open {
-        height: 100%;
+        height: 100vh;
         overflow: auto;
         background: rgba(0, 0, 0, 0.9);
     }
@@ -52,7 +52,7 @@ const MenuToggle = styled.div`
     }
 
     display: block;
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 50px;
