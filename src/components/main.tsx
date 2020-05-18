@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import styled from "styled-components";
 
 import {useContent, ContentData, ContentType} from "../contexts/content";
+import {Devices} from "./styles";
 
 const ContentWrapper = styled.div`
     padding: var(--theme-padding-big) var(--theme-padding-huge);
@@ -33,8 +34,13 @@ const ContentTitle = styled.div`
     padding: var(--theme-padding-small);
     background: var(--theme-header-text-background);
     color: var(--theme-header-text-color);
-    max-width: calc(0.5 * var(--theme-width-max));
     font-size: var(--theme-font-size-big);
+    width: 100%;
+
+    @media ${Devices.tablet} {
+        width: auto;
+        max-width: calc(0.5 * var(--theme-width-max));
+    }
 `
 
 export const MainCore: React.FunctionComponent<ContentData> = (data) => {
