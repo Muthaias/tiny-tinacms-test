@@ -6,11 +6,16 @@ import {useContent, ContentData, ContentType} from "../contexts/content";
 import {Devices} from "./styles";
 
 const ContentWrapper = styled.div`
-    padding: var(--theme-padding-big) var(--theme-padding-huge);
     font-family: var(--theme-font-family);
     font-size: var(--theme-font-size-medium);
     background: var(--theme-color-content-background);
     min-height: calc(100vh - var(--theme-height-header));
+
+    padding: var(--theme-padding-small) var(--theme-padding-medium);
+
+    @media ${Devices.tablet} {
+        padding: var(--theme-padding-big) var(--theme-padding-huge);
+    }
 `
 
 const Header = styled.div`
