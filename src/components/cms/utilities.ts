@@ -10,55 +10,94 @@ import {
     ContentBlock,
 } from "../../modules/datastore";
 
+const TitleBlock = {
+    label: "Title",
+    key: "title-block",
+    fields: [
+        {
+            label: "Name",
+            name: "name",
+            component: "text",
+        },
+        {
+            label: "Title block",
+            name: "title",
+            component: "text",
+        },
+        {
+            name: "imageUrl",
+            label: "Header Image URL",
+            component: "text",
+        }
+    ],
+    itemProps: item => ({
+        key: item.id,
+        label: "Title: " + item.name,
+    }),
+    defaultItem: {
+        id: "__title:" + Date.now(),
+        type: "title",
+        name: "Title",
+        title: "",
+        imageUrl: "",
+    }
+};
 
-const contentBlockField = {
-    name: "type",
-    label: "Content Block",
-    component: "content-block",
-    description: "Select content block type",
-    options: ["title", "text", "gallery"],
-    blockFields: {
-        title: [
-            {
-                label: "Name",
-                name: "name",
-                component: "text",
-            },
-            {
-                label: "Title block",
-                name: "title",
-                component: "text",
-            },
-            {
-                name: "imageUrl",
-                label: "Header Image URL",
-                component: "text",
-            }
-        ],
-        text: [
-            {
-                label: "Name",
-                name: "name",
-                component: "text",
-            },
-            {
-                label: "Text",
-                name: "text",
-                component: "markdown",
-            },
-        ],
-        gallery: [
-            {
-                label: "Name",
-                name: "name",
-                component: "text",
-            },
-            ...Array.from({length: 5}).map((_, index) => ({
-                label: "Image " + index,
-                name: "image" + index,
-                component: "text",
-            }))
-        ] 
+const TextBlock = {
+    label: "Text",
+    key: "text-block",
+    fields: [
+        {
+            label: "Name",
+            name: "name",
+            component: "text",
+        },
+        {
+            label: "Text",
+            name: "text",
+            component: "markdown",
+        },
+    ],
+    itemProps: item => ({
+        key: item.id,
+        label: "Text: " + item.name,
+    }),
+    defaultItem: {
+        id: "__text:" + Date.now(),
+        type: "text",
+        name: "Text",
+        text: "",
+    }
+}
+
+const GalleryBlock = {
+    label: "Gallery",
+    key: "gallery-block",
+    fields: [
+        {
+            label: "Name",
+            name: "name",
+            component: "text",
+        },
+        ...Array.from({length: 5}).map((_, index) => ({
+            label: "Image " + index,
+            name: "image" + index,
+            component: "text",
+        }))
+    ],
+    itemProps: item => ({
+        key: item.id,
+        label: "Gallery: " + item.name,
+    }),
+    defaultItem: {
+        id: "__gallery:" + Date.now(),
+        type: "gallery",
+        name: "Gallery",
+        image0: "",
+        image1: "",
+        image2: "",
+        image3: "",
+        image4: "",
     }
 }
 
@@ -80,20 +119,13 @@ export function useContentForm(
             {
                 label: "Content blocks",
                 name: "contentBlocks",
-                component: "group-list",
+                component: "blocks",
                 description: "Content blocks",
-                itemProps: item => ({
-                    key: item.id,
-                    label: item.name + ": " + item.type,
-                }),
-                defaultItem: () => ({
-                    id: "__block:" + Date.now(),
-                    type: "title",
-                    imageUrl: "",
-                    title: "",
-                    name: "Block",
-                }),
-                fields: [contentBlockField],
+                templates: {
+                    title: TitleBlock,
+                    text: TextBlock,
+                    gallery: GalleryBlock,
+                }
             },
         ],
         loadInitialValues: async () => {
@@ -102,7 +134,8 @@ export function useContentForm(
                 ...values,
                 contentBlocks: values.contentBlocks.map((block, index) => ({
                     ...block,
-                    id: "block:" + index
+                    id: "block:" + index,
+                    _template: block.type,
                 }))
             }
         },

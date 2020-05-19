@@ -1,5 +1,5 @@
 import {TinaCMS} from "tinacms";
-import {postCreator, menuCreator, ContentBlockPlugin} from "../plugins";
+import {postCreator, menuCreator} from "../plugins";
 import {EntryStore, Author, Post, Menu, DataSearch} from "../datastore";
 
 export function downloadObject(object: Object, name: string) {
@@ -81,7 +81,6 @@ export function cmsFromStores(
             }
         })
     );
-    cms.fields.add(ContentBlockPlugin);
 
     cms.registerApi("authors", authorStore);
     cms.registerApi("posts", postStore);
