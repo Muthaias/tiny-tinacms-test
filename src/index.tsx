@@ -64,17 +64,15 @@ const DataProvider: React.SFC<{streams: Streams, menuId: string, children}> = ({
                     const pageData = await streams.pages.get({id: pageId});
                     setContent({
                         type: ContentType.Page,
-                        content: pageData.content,
+                        contentBlocks: pageData.contentBlocks,
                         title: pageData.title,
-                        headerImage: pageData.imageUrl,
                     });
                 } else if (postId) {
                     const postData = await streams.posts.get({id: postId});
                     setContent({
-                        type: ContentType.Page,
-                        content: postData.content,
+                        type: ContentType.Post,
+                        contentBlocks: postData.contentBlocks,
                         title: postData.title,
-                        headerImage: postData.imageUrl,
                     });
                 }
             } catch (e) {

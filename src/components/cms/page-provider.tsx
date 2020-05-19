@@ -15,13 +15,12 @@ export const TinaPageProvider: React.SFC<{pageId: string, children: any}> = ({pa
     const post = useContentForm(
         pageId,
         () => pagesApi.get({id: pageId}),
-        ({title, content, imageUrl}: {title: string, content: string, imageUrl?: string}) => {
+        ({title, contentBlocks}) => {
             if (pageId !== null) {
                 return pagesApi.update({
                     id: pageId,
                     title,
-                    content,
-                    imageUrl
+                    contentBlocks,
                 });
             }
             return Promise.resolve();
@@ -29,13 +28,12 @@ export const TinaPageProvider: React.SFC<{pageId: string, children: any}> = ({pa
         "Page content"
     );
 
-    if (post === undefined) return null;
+    if (post === undefined || !post.contentBlocks) return null;
 
     const pageData: ContentData = {
         type: ContentType.Page,
         title: post.title,
-        content: post.content,
-        headerImage: post.imageUrl,
+        contentBlocks: post.contentBlocks,
     };
     return (
         <ContentContext.Provider value={pageData}>

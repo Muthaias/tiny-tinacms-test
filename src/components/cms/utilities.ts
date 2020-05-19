@@ -7,17 +7,18 @@ import {
 import {
     Entry,
     Post,
+    ContentBlock,
 } from "../../modules/datastore";
 
 
 const contentBlockField = {
-    name: "blockType",
+    name: "type",
     label: "Content Block",
     component: "content-block",
     description: "Select content block type",
-    options: ["titleBlock", "textBlock", "galleryBlock"],
+    options: ["title", "text", "gallery"],
     blockFields: {
-        titleBlock: [
+        title: [
             {
                 label: "Name",
                 name: "name",
@@ -34,7 +35,7 @@ const contentBlockField = {
                 component: "text",
             }
         ],
-        textBlock: [
+        text: [
             {
                 label: "Name",
                 name: "name",
@@ -46,7 +47,7 @@ const contentBlockField = {
                 component: "markdown",
             },
         ],
-        galleryBlock: [
+        gallery: [
             {
                 label: "Name",
                 name: "name",
@@ -64,7 +65,7 @@ const contentBlockField = {
 export function useContentForm(
     postId: string,
     loadInitialValues: () => Promise<Entry & Post>,
-    onSubmit: ({title, content, imageUrl}: {title: string, content: string, imageUrl?: string}) => Promise<void>,
+    onSubmit: (item: {title: string, contentBlocks: ContentBlock[]}) => Promise<void>,
     label: string = "Post content",
 ) {
     const formOptions: FormOptions<Entry & Post> = {
@@ -77,27 +78,17 @@ export function useContentForm(
                 component: "text",
             },
             {
-                name: "content",
-                label: "Content",
-                component: "markdown",
-            },
-            {
-                name: "imageUrl",
-                label: "Header Image URL",
-                component: "text",
-            },
-            {
                 label: "Content blocks",
                 name: "contentBlocks",
                 component: "group-list",
                 description: "Content blocks",
                 itemProps: item => ({
                     key: item.id,
-                    label: item.name + ": " + item.blockType,
+                    label: item.name + ": " + item.type,
                 }),
                 defaultItem: () => ({
                     id: "__block:" + Date.now(),
-                    blockType: "titleBlock",
+                    type: "title",
                     imageUrl: "",
                     title: "",
                     name: "Block",
@@ -105,7 +96,16 @@ export function useContentForm(
                 fields: [contentBlockField],
             },
         ],
-        loadInitialValues: loadInitialValues,
+        loadInitialValues: async () => {
+            const values = await loadInitialValues();
+            return {
+                ...values,
+                contentBlocks: values.contentBlocks.map((block, index) => ({
+                    ...block,
+                    id: "block:" + index
+                }))
+            }
+        },
         onSubmit: onSubmit
     };
     const [post, postForm] = useForm<Entry & Post>(formOptions);
