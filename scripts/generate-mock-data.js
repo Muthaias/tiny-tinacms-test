@@ -42,16 +42,28 @@ function firstHeader(content) {
 async function generateMockPosts(idPrefix = "post", numberOfPosts = 5) {
     const posts = [];
     for (let p = 0; p < numberOfPosts; p++) {
-        const data = await fetch("http://loripsum.net/api/3/medium/headers");
+        const data = await fetch("https://loripsum.net/api/3/medium/headers");
         const text = await data.text();
         const content = htmlToMd(text);
         const title = firstHeader(content);
-        const imageUrl = imageUrls[Math.floor((imageUrls.length - 1) * Math.random())] + "?auto=format&fit=crop&w=1500&h=300&q=80";
+        const imageUrl = imageUrls[Math.floor((imageUrls.length - 1) * Math.random())] + "?auto=format&fit=crop&w=1200&h=300&q=80";
+        const contentBlocks = [
+            {
+                name: "Title",
+                type: "title",
+                title: title,
+                imageUrl: imageUrl,
+            },
+            {
+                name: "Content",
+                type: "text",
+                text: content,
+            }
+        ];
         posts.push({
             id: idPrefix + "_" + p,
             title,
-            content,
-            imageUrl,
+            contentBlocks,
             author: "",
         });
     }
