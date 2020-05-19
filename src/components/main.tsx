@@ -7,7 +7,7 @@ import {Devices} from "./styles";
 
 const ContentWrapper = styled.div`
     font-family: var(--theme-font-family);
-    font-size: var(--theme-font-size-medium);
+    font-size: var(--theme-font-size-small);
     background: var(--theme-color-content-background);
     min-height: calc(100vh - var(--theme-height-header));
 
@@ -15,6 +15,7 @@ const ContentWrapper = styled.div`
 
     @media ${Devices.tablet} {
         padding: var(--theme-padding-big) var(--theme-padding-huge);
+        font-size: var(--theme-font-size-medium);
     }
 `
 
