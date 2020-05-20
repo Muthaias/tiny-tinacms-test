@@ -27,8 +27,9 @@ export const Gallery: React.SFC<GalleryProps> = ({images}) => {
             if (sliderWidth && galleryWidth) {
                 const positionCount = Math.ceil(sliderWidth / galleryWidth);
                 if (positionCount !== positions.length && positionCount > 1) {
-                    setPositions(Array.from({length: positionCount}).map((_, index) => (
-                        -((0.5 / positionCount) + (1 / positionCount) * index) * 100
+                    const realPositionCount = Math.max(images.length, positionCount);
+                    setPositions(Array.from({length: realPositionCount}).map((_, index) => (
+                        -((0.5 / realPositionCount) + (1 / realPositionCount) * index) * 100
                     )));
                 } else if (positionCount === 1) {
                     setPositions([-50]);
