@@ -1,5 +1,5 @@
 import * as React from "react";
-import styled from "styled-components";
+import styled, {css} from "styled-components";
 
 export interface GalleryProps {
     images: {
@@ -10,18 +10,76 @@ export interface GalleryProps {
 };
 
 export const Gallery: React.SFC<GalleryProps> = ({images}) => {
+    const [positionIndex, setPositionIndex] = React.useState(0);
+    const [positions, setPositions] = React.useState([-50]);
+    const [imageCount, setImageCount] = React.useState(0);
+    const galleryElement = React.useRef<typeof GalleryWrapper>(null);
+    const sliderElement = React.useRef<typeof GallerySlider>(null);
+    React.useEffect(() => {
+        if (positions.length < positionIndex) {
+            setPositionIndex(Math.max(positionIndex, positions.length - 1))
+        }
+    }, [positions, positionIndex]);
+    React.useEffect(() => {
+        const setSize = () => {
+            const galleryWidth = galleryElement && galleryElement.current.clientWidth;
+            const sliderWidth = sliderElement && sliderElement.current.clientWidth;
+            if (sliderWidth && galleryWidth) {
+                const positionCount = Math.ceil(sliderWidth / galleryWidth);
+                if (positionCount !== positions.length) {
+                    setPositions(Array.from({length: positionCount}).map((_, index) => (
+                        -((0.5 / positionCount) + (1 / positionCount) * index) * 100
+                    )));
+                }
+            }
+        };
+        window.addEventListener("resize", setSize);
+        setSize();
+        return () => {
+            window.removeEventListener("resize", setSize);
+        };
+    }, [galleryElement, sliderElement, imageCount, positions, positionIndex]); 
     return (
-        <GalleryWrapper>
-            {images.map((image, index) => (
-                <GalleryItemWrapper key={index}>
-                    <GalleryItem src={image.imageUrl}/>
-                    {image.title && <GalleryItemTitle>{image.title}</GalleryItemTitle>}
-                </GalleryItemWrapper>
-            ))}
+        <GalleryWrapper ref={galleryElement}>
+            <GallerySlider ref={sliderElement} translateX={positions[positionIndex]}>
+                {images.map((image, index) => (
+                    <GalleryItemWrapper key={index}>
+                        <GalleryItem src={image.imageUrl} onLoad={() => setImageCount(imageCount + 1)}/>
+                        {image.title && <GalleryItemTitle>{image.title}</GalleryItemTitle>}
+                    </GalleryItemWrapper>
+                ))}
+            </GallerySlider>
+            {positions.length > 1 && <GalleryNav orientation={"left"} onClick={() => setPositionIndex((positions.length + positionIndex - 1) % positions.length)}>{"<"}</GalleryNav>}
+            {positions.length > 1 && <GalleryNav orientation={"right"} onClick={() => setPositionIndex((positionIndex + 1) % positions.length)}>{">"}</GalleryNav>}
         </GalleryWrapper>
     );
 };
 
+const GalleryNav = styled.div`
+    position: absolute;
+    top: 50%;
+    padding: var(--theme-padding-small);
+    transform: translateY(-50%);
+    background: var(--theme-header-text-background);
+    color: var(--theme-header-text-color);
+    ${props => (props.orientation === "left" ? (
+        css`
+            left: var(--theme-padding-small);
+        `
+    ) : (
+        css`
+            right: var(--theme-padding-small);
+        `
+    ))}
+`
+
+const GallerySlider = styled.div`
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(${props => props.translateX}%);
+    transition: transform 0.1s;
+`
 
 const GalleryItemWrapper = styled.div`
     position: relative;
@@ -42,14 +100,16 @@ const GalleryItemTitle = styled.div`
 
 const GalleryItem = styled.img`
     height: 100%;
-    display: inline-block;
+    display: block;
 `
 
 const GalleryWrapper = styled.div`
+    position: relative;
     background: var(--theme-color-deep-background);
     height: var(--theme-height-gallery);
     max-width: var(--theme-width-max);
-    border: solid 1px var(--theme-color-deep-background);
+    border-top: solid 1px var(--theme-color-deep-background);
+    border-bottom: solid 1px var(--theme-color-deep-background);
     text-align: center;
     overflow: hidden;
     white-space: nowrap;
