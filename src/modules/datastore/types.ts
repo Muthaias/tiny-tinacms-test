@@ -9,7 +9,10 @@ export type ContentBlock = {
     text: string;
 } | {
     type: "gallery";
-    images: string[];
+    images: {
+        imageUrl: string;
+        title: string;
+    }[];
 });
 
 export type Post = {

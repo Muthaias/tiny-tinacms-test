@@ -4,6 +4,7 @@ import styled from "styled-components";
 
 import {useContent, ContentData, ContentType} from "../contexts/content";
 import {Devices} from "./styles";
+import {Gallery} from "./gallery";
 
 const TextWrapper = styled.div`
     font-family: var(--theme-font-family);
@@ -79,6 +80,9 @@ export const MainCore: React.FunctionComponent<ContentData> = (data) => {
                                 <TextWrapper key={index}>
                                     <ReactMarkdown key={index} source={block.text || ""} />
                                 </TextWrapper>
+                            );
+                            case "gallery": return (
+                                <Gallery images={block.images} height={"150px"}/>
                             );
                             default: return null;
                         }

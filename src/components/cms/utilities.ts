@@ -79,11 +79,38 @@ const GalleryBlock = {
             name: "name",
             component: "text",
         },
-        ...Array.from({length: 5}).map((_, index) => ({
-            label: "Image " + index,
-            name: "image" + index,
+        {
+            label: "Height",
+            name: "height",
             component: "text",
-        }))
+        },
+        {
+            label: "Images",
+            name: "images",
+            component: "group-list",
+            description: "Image list",
+            itemProps: item => ({
+                key: item.id,
+                label: item.title,
+            }),
+            defaultItem: () => ({
+                title: "",
+                imageUrl: "",
+                id: "__image:" + Date.now(),
+            }),
+            fields: [
+                {
+                    label: "Title",
+                    name: "title",
+                    component: "text",
+                },
+                {
+                    label: "Image",
+                    name: "imageUrl",
+                    component: "text",
+                },
+            ]
+        }
     ],
     itemProps: item => ({
         key: item.id,
@@ -93,11 +120,7 @@ const GalleryBlock = {
         id: "__gallery:" + Date.now(),
         type: "gallery",
         name: "Gallery",
-        image0: "",
-        image1: "",
-        image2: "",
-        image3: "",
-        image4: "",
+        images: [],
     }
 }
 
@@ -132,7 +155,15 @@ export function useContentForm(
             const values = await loadInitialValues();
             return {
                 ...values,
-                contentBlocks: values.contentBlocks.map((block, index) => ({
+                contentBlocks: values.contentBlocks.map((block, index) => (block.type === "gallery" ? {
+                    ...block,
+                    id: "block:" + index,
+                    images: block.images.map((image, imageIndex) => ({
+                        ...image,
+                        id: "image" + imageIndex,
+                    })),
+                    _template: block.type,
+                } : {
                     ...block,
                     id: "block:" + index,
                     _template: block.type,

@@ -21,6 +21,7 @@ const theme = css`
         --theme-header-text-color: #fff;
 
         --theme-color-background: #eee;
+        --theme-color-deep-background: #333;
         --theme-color-content-background: #fff;
     }
 
