@@ -39,14 +39,36 @@ function firstHeader(content) {
     return match ? match[1] : "No header";
 }
 
-async function generateMockPosts(idPrefix = "post", numberOfPosts = 5) {
-    const posts = [];
-    for (let p = 0; p < numberOfPosts; p++) {
+async function getRandomContent() {
+    try {
         const data = await fetch("https://loripsum.net/api/3/medium/headers");
         const text = await data.text();
         const content = htmlToMd(text);
+        return content;
+    } catch (e) {
+        throw new Error("Could not get content!");
+    }
+}
+
+function getRandomImage(option) {
+    const optionQuery = option && Object.keys(option).map((key) => key + "=" + option[key]).join("&");
+    const imageUrl = imageUrls[Math.floor((imageUrls.length - 1) * Math.random())];
+    return imageUrl + (optionQuery ? "?" + optionQuery : "");
+}
+
+async function generateMockPosts(idPrefix = "post", numberOfPosts = 5) {
+    const posts = [];
+    for (let p = 0; p < numberOfPosts; p++) {
+        const content = await getRandomContent();
+        const secondaryContent = await getRandomContent();
         const title = firstHeader(content);
-        const imageUrl = imageUrls[Math.floor((imageUrls.length - 1) * Math.random())] + "?auto=format&fit=crop&w=1200&h=300&q=80";
+        const imageUrl = getRandomImage({
+            auto: "format",
+            fit: "crop",
+            w: 1200,
+            h: 300,
+            q: 60,
+        });
         const contentBlocks = [
             {
                 name: "Title",
@@ -58,7 +80,26 @@ async function generateMockPosts(idPrefix = "post", numberOfPosts = 5) {
                 name: "Content",
                 type: "text",
                 text: content,
-            }
+            },
+            {
+                name: "Gallery",
+                type: "gallery",
+                height: "150px",
+                images: Array.from({length: 3}).map((_, index) => ({
+                    title: "Image " + index,
+                    imageUrl: getRandomImage({
+                        auto: "format",
+                        fit: "crop",
+                        h: 150,
+                        q: 60,
+                    })
+                }))
+            },
+            {
+                name: "Secondary content",
+                type: "text",
+                text: secondaryContent,
+            },
         ];
         posts.push({
             id: idPrefix + "_" + p,
@@ -71,29 +112,33 @@ async function generateMockPosts(idPrefix = "post", numberOfPosts = 5) {
 }
 
 async function saveMockData() {
-    const posts = await generateMockPosts();
-    const pages = await generateMockPosts("page");
-    const menus = [
-        {
-            "name": "Main",
-            "entries": pages.map(page => ({
-                name: page.title.split(" ").slice(0,3).join(" "),
-                key: page.id,
-                link: "/page/" + page.id,
-            })),
-            "tags": [],
-            "id": "_menu:mainmenu",
-            "index": 0
+    try {
+        const posts = await generateMockPosts();
+        const pages = await generateMockPosts("page");
+        const menus = [
+            {
+                "name": "Main",
+                "entries": pages.map(page => ({
+                    name: page.title.split(" ").slice(0,3).join(" "),
+                    key: page.id,
+                    link: "/page/" + page.id,
+                })),
+                "tags": [],
+                "id": "_menu:mainmenu",
+                "index": 0
+            }
+        ];
+        const authors = [];
+        const data = {
+            posts,
+            pages,
+            menus,
+            authors,
         }
-    ];
-    const authors = [];
-    const data = {
-        posts,
-        pages,
-        menus,
-        authors,
+        fs.writeFileSync("./data/data.json", JSON.stringify(data, undefined, "    "))
+    } catch (e) {
+        console.log(e.message);
     }
-    fs.writeFileSync("./data/data.json", JSON.stringify(data, undefined, "    "))
 }
 
 saveMockData();
