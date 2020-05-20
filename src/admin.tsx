@@ -16,7 +16,7 @@ import {
 } from "react-router-dom";
 import {CMSProvider} from "./components/cms";
 
-const dataPrefix = "contentBlocks:";
+const dataPrefix = "contentBlocks:withGallery:";
 
 function renderSite(
     targetId: string = "app"
