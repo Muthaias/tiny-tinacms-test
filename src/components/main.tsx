@@ -4,12 +4,12 @@ import styled from "styled-components";
 
 import {useContent, ContentData, ContentType} from "../contexts/content";
 import {Devices} from "./styles";
+import {Gallery} from "./gallery";
 
-const ContentWrapper = styled.div`
+const TextWrapper = styled.div`
     font-family: var(--theme-font-family);
     font-size: var(--theme-font-size-small);
     background: var(--theme-color-content-background);
-    min-height: calc(100vh - var(--theme-height-header));
 
     padding: var(--theme-padding-small) var(--theme-padding-medium);
 
@@ -19,9 +19,14 @@ const ContentWrapper = styled.div`
     }
 `
 
+const ContentWrapper = styled.div`
+    background: var(--theme-color-content-background);
+    min-height: calc(100vh);
+`
+
 const Header = styled.div`
     position: relative;
-    background-image: url('${props => props.data.headerImage || ""}');
+    background-image: url('${props => props.data.imageUrl || ""}');
     background-color: #333;
     background-repeat: no-repeat;
     background-position: center;
@@ -51,32 +56,40 @@ const ContentTitle = styled.div`
 
 export const MainCore: React.FunctionComponent<ContentData> = (data) => {
     return (
-        <>
-            <Header data={data}>
-                <ContentTitle>{data.title}</ContentTitle>
-            </Header>
-            <ContentWrapper>
-                {(() => {
-                    switch(data.type) {
-                        case ContentType.Listing: return (
-                            <>
-                                <ul>
-                                    {data.entries.map(entry => (
-                                        <li key={entry.id}>{entry.title}</li>
-                                    ))}
-                                </ul>
-                            </>
-                        );
-                        case ContentType.Page:
-                        case ContentType.Post: return (
-                            <>
-                                <ReactMarkdown source={data.content || ""}></ReactMarkdown>
-                            </>
-                        );
-                    }
-                })()}
-            </ContentWrapper>
-        </>
+        <ContentWrapper>
+            {(() => {
+                switch(data.type) {
+                    case ContentType.Listing: return (
+                        <>
+                            <ul>
+                                {data.entries.map(entry => (
+                                    <li key={entry.id}>{entry.title}</li>
+                                ))}
+                            </ul>
+                        </>
+                    );
+                    case ContentType.Page:
+                    case ContentType.Post: return data.contentBlocks.map((block, index) => {
+                        switch (block.type) {
+                            case "title": return (
+                                <Header key={index} data={block}>
+                                    <ContentTitle>{block.title}</ContentTitle>
+                                </Header>
+                            );
+                            case "text": return (
+                                <TextWrapper key={index}>
+                                    <ReactMarkdown key={index} source={block.text || ""} />
+                                </TextWrapper>
+                            );
+                            case "gallery": return (
+                                <Gallery key={index} images={block.images} height={"150px"}/>
+                            );
+                            default: return null;
+                        }
+                    });
+                }
+            })()}
+        </ContentWrapper>
     );
 }
 

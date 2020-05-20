@@ -4,6 +4,7 @@ import {
     PageData,
     ListingData,
     ContentType,
+    ContentData,
 } from "../contexts";
 
 export const mockMenuData: MenuData = {
@@ -23,14 +24,19 @@ export const mockPostsData: PostData[] = [
     {
         type: ContentType.Post,
         title: "Hello world!",
-        content: "There's currently no post available here!",
-        headerImage: mockImageUrl,
-    },
-    {
-        type: ContentType.Post,
-        title: "Brave new world!",
-        content: "",
-        headerImage: mockImageUrl,
+        contentBlocks: [
+            {
+                name: "Title",
+                type: "title",
+                title: "Hello world!",
+                imageUrl: mockImageUrl,
+            },
+            {
+                name: "Content",
+                type: "text",
+                text: "There's currently no page available here!",
+            }
+        ],
     },
 ];
 
@@ -38,8 +44,19 @@ export const mockPagesData: PageData[] = [
     {
         type: ContentType.Page,
         title: "Hello world!",
-        content: "There's currently no page available here!",
-        headerImage: mockImageUrl,
+        contentBlocks: [
+            {
+                name: "Title",
+                type: "title",
+                title: "Hello world!",
+                imageUrl: mockImageUrl,
+            },
+            {
+                name: "Content",
+                type: "text",
+                text: "There's currently no page available here!",
+            }
+        ],
     },
 ];
 
@@ -48,6 +65,5 @@ export const mockListingsData: ListingData[] = [
         type: ContentType.Listing,
         title: "Hello world!",
         entries: [],
-        headerImage: mockImageUrl,
     },
 ];

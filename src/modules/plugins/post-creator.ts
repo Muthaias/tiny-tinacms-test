@@ -1,5 +1,5 @@
 import {ContentCreatorPlugin} from "tinacms";
-import {Post, Menu} from "./datastore";
+import {Post} from "../datastore";
 
 export function postCreator({
     name,
@@ -15,27 +15,6 @@ export function postCreator({
             {
                 name: 'title',
                 label: 'Title',
-                component: 'text',
-            }
-        ],
-        onSubmit,
-    }
-}
-
-export function menuCreator({
-    name,
-    onSubmit,
-}: {
-    name: string,
-    onSubmit: (c: Pick<Menu, "name">) => Promise<any>;
-}): ContentCreatorPlugin<Pick<Menu, "name">> {
-    return {
-        name: name,
-        __type: "content-creator",
-        fields: [
-            {
-                name: 'name',
-                label: 'Name',
                 component: 'text',
             }
         ],

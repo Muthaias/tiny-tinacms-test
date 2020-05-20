@@ -13,26 +13,24 @@ export const TinaPostProvider: React.SFC<{postId: string, children: any}> = ({po
     const post = useContentForm(
         postId,
         () => postsApi.get({id: postId}),
-        ({title, content, imageUrl}: {title: string, content: string, imageUrl?: string}) => {
+        ({title, contentBlocks}) => {
             if (postId !== null) {
                 return postsApi.update({
                     id: postId,
                     title,
-                    content,
-                    imageUrl
+                    contentBlocks,
                 });
             }
             return Promise.resolve();
         }
     );
 
-    if (post === undefined) return null;
+    if (post === undefined || !post.contentBlocks) return null;
 
     const postData: ContentData = {
         type: ContentType.Post,
         title: post.title,
-        content: post.content,
-        headerImage: post.imageUrl,
+        contentBlocks: post.contentBlocks,
     }
     return (
         <ContentContext.Provider value={postData}>

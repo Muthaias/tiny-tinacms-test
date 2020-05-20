@@ -9,6 +9,7 @@ const theme = css`
 
         --theme-width-max: 1200px;
         --theme-height-header: 300px;
+        --theme-height-gallery: 150px;
 
         --theme-header-image-size: 100%;
     
@@ -21,6 +22,7 @@ const theme = css`
         --theme-header-text-color: #fff;
 
         --theme-color-background: #eee;
+        --theme-color-deep-background: #333;
         --theme-color-content-background: #fff;
     }
 

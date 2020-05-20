@@ -1,10 +1,26 @@
+export type ContentBlock = {
+    name: string;
+} & ({
+    type: "title";
+    imageUrl: string;
+    title: string;
+} | {
+    type: "text";
+    text: string;
+} | {
+    type: "gallery";
+    images: {
+        imageUrl: string;
+        title: string;
+    }[];
+});
+
 export type Post = {
     title: string;
     type: string;
-    content: string;
     author?: string;
-    imageUrl?: string;
     index?: number,
+    contentBlocks: ContentBlock[];
 }
 
 export type Author = {

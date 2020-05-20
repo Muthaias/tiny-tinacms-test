@@ -26,7 +26,11 @@ export function cmsFromStores(
                 return postStore.add({
                     title: values.title || "Untitled post",
                     type: "basic",
-                    content: "",
+                    contentBlocks: [{
+                        name: "Content",
+                        type: "text",
+                        text: "",
+                    }],
                 });
             }
         })
@@ -38,7 +42,11 @@ export function cmsFromStores(
                 return pageStore.add({
                     title: values.title || "Untitled page",
                     type: "basic",
-                    content: "",
+                    contentBlocks: [{
+                        name: "Content",
+                        type: "text",
+                        text: "",
+                    }],
                 });
             }
         })
@@ -59,10 +67,10 @@ export function cmsFromStores(
         menuCreator({
             name: "Dump data",
             onSubmit: async (values) => {
-                const authors = authorStore.getEntries();
-                const posts = postStore.getEntries();
-                const pages = pageStore.getEntries();
-                const menus = menuStore.getEntries();
+                const authors = await authorStore.getEntries();
+                const posts = await postStore.getEntries();
+                const pages = await pageStore.getEntries();
+                const menus = await menuStore.getEntries();
                 const data = {
                     authors,
                     posts,

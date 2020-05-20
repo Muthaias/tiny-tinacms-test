@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import {ContentBlock} from "../modules/datastore";
+
 export enum ContentType {
     Post,
     Page,
@@ -8,17 +10,16 @@ export enum ContentType {
 
 interface CommonContentData {
     title: string;
-    headerImage?: string;
 }
 
 export interface PostData extends CommonContentData {
     type: ContentType.Post;
-    content: string;
+    contentBlocks: ContentBlock[];
 }
 
 export interface PageData extends CommonContentData {
     type: ContentType.Page;
-    content: string;
+    contentBlocks: ContentBlock[];
 }
 
 export interface ListingData extends CommonContentData {
