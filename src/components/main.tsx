@@ -82,7 +82,7 @@ export const MainCore: React.FunctionComponent<ContentData> = (data) => {
                                 </TextWrapper>
                             );
                             case "gallery": return (
-                                <Gallery images={block.images} height={"150px"}/>
+                                <Gallery key={index} images={block.images} height={"150px"}/>
                             );
                             default: return null;
                         }
