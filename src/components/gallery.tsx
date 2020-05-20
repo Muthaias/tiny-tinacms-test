@@ -9,9 +9,9 @@ export interface GalleryProps {
     height: string;
 };
 
-export const Gallery: React.SFC<GalleryProps> = ({height, images}) => {
+export const Gallery: React.SFC<GalleryProps> = ({images}) => {
     return (
-        <GalleryWrapper height={height}>
+        <GalleryWrapper>
             {images.map((image, index) => (
                 <GalleryItemWrapper key={index}>
                     <GalleryItem src={image.imageUrl}/>
@@ -47,9 +47,9 @@ const GalleryItem = styled.img`
 
 const GalleryWrapper = styled.div`
     background: var(--theme-color-deep-background);
-    height: ${props => props.height};
+    height: var(--theme-height-gallery);
     max-width: var(--theme-width-max);
-    border: solid 1px var(--theme-color-deept-background);
+    border: solid 1px var(--theme-color-deep-background);
     text-align: center;
     overflow: hidden;
     white-space: nowrap;
