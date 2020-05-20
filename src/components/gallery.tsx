@@ -16,8 +16,8 @@ export const Gallery: React.SFC<GalleryProps> = ({images}) => {
     const galleryElement = React.useRef<typeof GalleryWrapper>(null);
     const sliderElement = React.useRef<typeof GallerySlider>(null);
     React.useEffect(() => {
-        if (positions.length < positionIndex) {
-            setPositionIndex(Math.max(positionIndex, positions.length - 1))
+        if (positions.length <= positionIndex) {
+            setPositionIndex(Math.min(positionIndex, positions.length - 1))
         }
     }, [positions, positionIndex]);
     React.useEffect(() => {
@@ -26,10 +26,12 @@ export const Gallery: React.SFC<GalleryProps> = ({images}) => {
             const sliderWidth = sliderElement && sliderElement.current.clientWidth;
             if (sliderWidth && galleryWidth) {
                 const positionCount = Math.ceil(sliderWidth / galleryWidth);
-                if (positionCount !== positions.length) {
+                if (positionCount !== positions.length && positionCount > 1) {
                     setPositions(Array.from({length: positionCount}).map((_, index) => (
                         -((0.5 / positionCount) + (1 / positionCount) * index) * 100
                     )));
+                } else if (positionCount === 1) {
+                    setPositions([-50]);
                 }
             }
         };
@@ -38,7 +40,7 @@ export const Gallery: React.SFC<GalleryProps> = ({images}) => {
         return () => {
             window.removeEventListener("resize", setSize);
         };
-    }, [galleryElement, sliderElement, imageCount, positions, positionIndex]); 
+    }, [galleryElement, sliderElement, imageCount, positions.join(",")]);
     return (
         <GalleryWrapper ref={galleryElement}>
             <GallerySlider ref={sliderElement} translateX={positions[positionIndex]}>
