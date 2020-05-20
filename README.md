@@ -19,12 +19,14 @@ This project has seen some extreme feature creap in order to try out `TinaCMS` f
 
 ## Running
 The result will be hosted on `localhost:5000` by default.
+* Remember to run the content generation script, `script/generate-mock-data.js`, unless you want to populate the data yourself.
 * Admin endpoint can be reached at `localhost:5000/admin.html`
 * User endpoint can be reached at `localhost:5000/index.html`
 
 ### Development
 ```
 npx yarn install
+node script/generate-mock-data.js
 npm start
 npm run serve
 ```
