@@ -95,5 +95,13 @@ export const MainCore: React.FunctionComponent<ContentData> = (data) => {
 
 export const Main: React.SFC = () => {
     const content = useContent();
+    React.useEffect(() => {
+        const type = {
+            [ContentType.Page]: "Page",
+            [ContentType.Post]: "Post",
+            [ContentType.Listing]: "Listing",
+        }[content.type] || "";
+        document.title = type + ": " + content.title;
+    }, [content.title, content.type]);
     return <MainCore {...content}/>
 }
