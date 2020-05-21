@@ -17,6 +17,11 @@ This project has seen some extreme feature creap in order to try out `TinaCMS` f
 * Enable building a CMS free javascript bundle
 * Include basic and advanced blog feature in order to use as much of `TinaCMS` as possible
 
+## Try it out
+There's a prebuild version on github pages. As with the development environment there are two entryponts. One serving static data with only reader functionality and one with the admin interface using `local storage` as storage medium.
+* https://muthaias.github.io/tiny-tinacms-test/
+* https://muthaias.github.io/tiny-tinacms-test/admin.html
+
 ## Running
 The result will be hosted on `localhost:5000` by default.
 * Remember to run the content generation script, `script/generate-mock-data.js`, unless you want to populate the data yourself.
