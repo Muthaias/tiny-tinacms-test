@@ -1,6 +1,6 @@
 import {TinaCMS} from "tinacms";
 import {postCreator, menuCreator} from "../plugins";
-import {EntryStore, Author, Post, Menu, DataSearch} from "../datastore";
+import {EntryStore, Author, Post, Menu, DataSearch, ContentBlockType} from "../datastore";
 
 export function downloadObject(object: Object, name: string) {
     const dataString = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(object, undefined, '    '));
@@ -28,7 +28,7 @@ export function cmsFromStores(
                     type: "basic",
                     contentBlocks: [{
                         name: "Content",
-                        type: "text",
+                        type: ContentBlockType.Text,
                         text: "",
                     }],
                 });
@@ -44,7 +44,7 @@ export function cmsFromStores(
                     type: "basic",
                     contentBlocks: [{
                         name: "Content",
-                        type: "text",
+                        type: ContentBlockType.Text,
                         text: "",
                     }],
                 });

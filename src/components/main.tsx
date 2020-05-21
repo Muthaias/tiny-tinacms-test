@@ -2,6 +2,7 @@ import * as React from "react";
 import ReactMarkdown from "react-markdown";
 import styled from "styled-components";
 
+import {ContentBlockType} from "../modules/datastore";
 import {useContent, ContentData, ContentType} from "../contexts/content";
 import {Devices} from "./styles";
 import {Gallery} from "./gallery";
@@ -71,17 +72,17 @@ export const MainCore: React.FunctionComponent<ContentData> = (data) => {
                     case ContentType.Page:
                     case ContentType.Post: return data.contentBlocks.map((block, index) => {
                         switch (block.type) {
-                            case "title": return (
+                            case ContentBlockType.Title: return (
                                 <Header key={index} data={block}>
                                     <ContentTitle>{block.title}</ContentTitle>
                                 </Header>
                             );
-                            case "text": return (
+                            case ContentBlockType.Text: return (
                                 <TextWrapper key={index}>
                                     <ReactMarkdown key={index} source={block.text || ""} />
                                 </TextWrapper>
                             );
-                            case "gallery": return (
+                            case ContentBlockType.Gallery: return (
                                 <Gallery key={index} images={block.images} height={"150px"}/>
                             );
                             default: return null;

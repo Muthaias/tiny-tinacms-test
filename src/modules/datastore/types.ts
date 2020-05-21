@@ -1,14 +1,20 @@
+export enum ContentBlockType {
+    Title = "title",
+    Text = "text",
+    Gallery = "gallery",
+};
+
 export type ContentBlock = {
     name: string;
 } & ({
-    type: "title";
+    type: ContentBlockType.Title;
     imageUrl: string;
     title: string;
 } | {
-    type: "text";
+    type: ContentBlockType.Text;
     text: string;
 } | {
-    type: "gallery";
+    type: ContentBlockType.Gallery;
     images: {
         imageUrl: string;
         title: string;

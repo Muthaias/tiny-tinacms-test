@@ -4,8 +4,10 @@ import {
     PageData,
     ListingData,
     ContentType,
-    ContentData,
 } from "../contexts";
+import {
+    ContentBlockType
+} from "./datastore";
 
 export const mockMenuData: MenuData = {
     items: [
@@ -27,13 +29,13 @@ export const mockPostsData: PostData[] = [
         contentBlocks: [
             {
                 name: "Title",
-                type: "title",
+                type: ContentBlockType.Title,
                 title: "Hello world!",
                 imageUrl: mockImageUrl,
             },
             {
                 name: "Content",
-                type: "text",
+                type: ContentBlockType.Text,
                 text: "There's currently no page available here!",
             }
         ],
@@ -47,13 +49,13 @@ export const mockPagesData: PageData[] = [
         contentBlocks: [
             {
                 name: "Title",
-                type: "title",
+                type: ContentBlockType.Title,
                 title: "Hello world!",
                 imageUrl: mockImageUrl,
             },
             {
                 name: "Content",
-                type: "text",
+                type: ContentBlockType.Text,
                 text: "There's currently no page available here!",
             }
         ],

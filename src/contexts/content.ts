@@ -3,9 +3,9 @@ import * as React from "react";
 import {ContentBlock} from "../modules/datastore";
 
 export enum ContentType {
-    Post,
-    Page,
-    Listing
+    Post = "post",
+    Page = "page",
+    Listing = "listing",
 };
 
 interface CommonContentData {
