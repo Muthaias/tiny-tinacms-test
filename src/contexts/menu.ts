@@ -11,10 +11,11 @@ export interface MenuItem {
     onClick?: () => void;
 }
 
-export const MenuContext = React.createContext<MenuData>({
+export const MenuContext = React.createContext<(id: string) => MenuData>((id: string) => ({
     items: [],
-});
+}));
 
-export function useMenu() {
-    return React.useContext(MenuContext);
+export function useMenu(id: string = "Main") {
+    const menu = React.useContext(MenuContext);
+    return menu(id);
 }

@@ -10,9 +10,9 @@ import {
 import {
     Post,
     Menu,
-    EntryRead,
-    DataSearch,
+    DataStream,
     GenericEntryStore,
+    Utilities,
 } from "./modules/datastore";
 import {
     MenuContext,
@@ -30,32 +30,27 @@ interface Streams {
     pages: DataStream<Post>;
     menus: DataStream<Menu>;
 }
-type DataStream<T> = EntryRead<T> & DataSearch<T>;
-const DataProvider: React.SFC<{streams: Streams, menuId: string, children}> = ({streams, menuId, children}) => {
+
+
+const DataProvider: React.SFC<{streams: Streams, children}> = ({streams, children}) => {
     const history = useHistory();
-    const [mainMenu, setMainMenu] = React.useState<MenuData>({items: []});
     const [content, setContent] = React.useState<ContentData>(mockPostsData[0]);
-
-    React.useEffect(() => {
-        streams.menus.first({
-            type: "property",
-            propertyId: "name" as "name",
-            criteria: menuId,
-        }).then(menuContent => {
-            setMainMenu(menuContent ? {
-                items: menuContent.entries.map((entry, index) => ({
-                    key: entry.name + ":" + index,
-                    label: entry.name,
-                    onClick: () => entry.link && history.push(entry.link),
-                })),
-            } : {items: []});
-        });
-    }, [menuId, streams]);
-
     const pageMatch = useRouteMatch<{id: string}>("/page/:id");
     const postMatch = useRouteMatch<{id: string}>("/post/:id");
     const pageId = pageMatch && pageMatch.params.id;
     const postId = postMatch && postMatch.params.id;
+
+    const [menu] = Utilities.useMenuStore(streams.menus);
+    const menuCallback = React.useCallback((id: string) => {
+        const menuContent = menu(id);
+        return menuContent ? {
+            items: menuContent.entries.map((entry, index) => ({
+                key: entry.name + ":" + index,
+                label: entry.name,
+                onClick: () => entry.link && history.push(entry.link),
+            })),
+        } : {items: []}
+    }, [menu]);
 
     React.useEffect(() => {
         (async () => {
@@ -83,7 +78,7 @@ const DataProvider: React.SFC<{streams: Streams, menuId: string, children}> = ({
     }, [pageId, postId, streams]);
 
     return (
-        <MenuContext.Provider value={mainMenu}>
+        <MenuContext.Provider value={menuCallback}>
             <ContentContext.Provider value={content}>
                 {React.Children.toArray(children)}
             </ContentContext.Provider>
@@ -98,7 +93,7 @@ const DataStreams = {
 };
 ReactDOM.render(
     <Router>
-        <DataProvider streams={DataStreams} menuId={"Main"}>
+        <DataProvider streams={DataStreams} >
             <Application />
         </DataProvider>
     </Router>,

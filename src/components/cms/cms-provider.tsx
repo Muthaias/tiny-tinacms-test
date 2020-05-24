@@ -28,7 +28,7 @@ export const CMSProvider: React.FunctionComponent<{init: () => TinaCMS, children
 
     return (
         <TinaProvider cms={cms}>
-            <TinaMenuProvider menuId={routeMatch?.params.menuId || "Main"}>
+            <TinaMenuProvider>
                 <PostSelector />
                 <PageSelector />
                 <Switch>

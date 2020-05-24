@@ -1,3 +1,5 @@
+import {DataSearch} from "./datasearch";
+
 export interface EntryRead<T> {
     get(entry: Entry): Promise<Entry & T>;
     getEntries(offset?: number, count?: number): Promise<(Entry & T)[]>;
@@ -20,3 +22,5 @@ export interface DataStore<T> {
 export type Entry = {
     id: string;
 }
+
+export type DataStream<T> = EntryRead<T> & DataSearch<Entry & T>;
