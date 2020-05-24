@@ -85,7 +85,7 @@ async function generateMockPosts(idPrefix = "post", numberOfPosts = 5) {
                 name: "Gallery",
                 type: "gallery",
                 height: "150px",
-                images: Array.from({length: 3}).map((_, index) => ({
+                images: Array.from({length: 10}).map((_, index) => ({
                     title: "Image " + index,
                     imageUrl: getRandomImage({
                         auto: "format",
