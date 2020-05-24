@@ -7,8 +7,7 @@ export function requireEntryId(entry: Partial<Entry>): string {
     return entry.id;
 }
 
-export function useMenuStore(stream: DataStream<Menu>, initialMenuIds: string[] = []): [(id: string) => Entry & Menu, string[]] {
-    const [menuIds, setMenuIds] = React.useState<string[]>(initialMenuIds);
+export function useMenuStore(stream: DataStream<Menu>): [(id: string) => Entry & Menu, string[]] {
     const [menuMap, dispatchMenuMap] = React.useReducer<React.Reducer<{[id: string]: Entry & Menu | undefined}, {id: string, entry: Entry & Menu}>>((state, action) => {
         const newState = {
             ...state,
@@ -16,19 +15,19 @@ export function useMenuStore(stream: DataStream<Menu>, initialMenuIds: string[] 
         };
         return newState;
     }, {});
-    const newMenuIds = React.useMemo(() => [...menuIds], [menuIds]);
-    const updateRef = React.useRef<Promise<void> | null>(null);
     const loadRef = React.useRef<{[x: string]: boolean}>({});
     const menu = React.useCallback((id: string): Entry & Menu => {
         const m = menuMap[id];
 
-        if (!m && newMenuIds.indexOf(id) === -1) {
-            newMenuIds.push(id);
-            if (!updateRef.current) {
-                updateRef.current = Promise.resolve().then(() => {
-                    setMenuIds([...newMenuIds]);
-                });
-            }
+        if (!m && !loadRef.current[id]) {
+            loadRef.current[id] = true;
+            stream.first({
+                type: "property",
+                propertyId: "name" as "name",
+                criteria: id,
+            }).then((loadedMenu) => {
+                dispatchMenuMap({id: id, entry: loadedMenu});
+            })
         }
 
         return m || {
@@ -37,22 +36,7 @@ export function useMenuStore(stream: DataStream<Menu>, initialMenuIds: string[] 
             entries: [],
             tags: [],
         };
-    }, [menuMap, newMenuIds]);
-    React.useEffect(() => {
-        (async () => {
-            for (let menuId of menuIds) {
-                if (!menuMap[menuId] && !loadRef.current[menuId]) {
-                    loadRef.current[menuId] = true;
-                    const m = await stream.first({
-                        type: "property",
-                        propertyId: "name" as "name",
-                        criteria: menuId,
-                    });
-                    dispatchMenuMap({id: menuId, entry: m});
-                }
-            }
-        })();
-    }, [menuIds, menuMap, stream]);
+    }, [menuMap, stream]);
     const loadedMenuIds = React.useMemo(() => Object.keys(menuMap), [menuMap]);
     return [menu, loadedMenuIds];
 }
