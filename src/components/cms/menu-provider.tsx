@@ -25,10 +25,10 @@ export function useMenuForms(
         id: string,
         initialValues: Entry & Menu,
         onSubmit: (menuProps: Partial<(Entry & Menu)>) => Promise<void>,
+        label: string,
     }[],
-    label: string = "Menu content",
 ): {[id: string]: (Entry & Menu)} {
-    const formGroup = React.useMemo(() => menuSpecs.map(({id, initialValues, onSubmit}) => {
+    const formGroup = React.useMemo(() => menuSpecs.map(({id, initialValues, onSubmit, label}) => {
         const formOptions: FormOptions<Entry & Menu> = {
             id: "__menu:" + id,
             label: label,
@@ -129,9 +129,9 @@ export const TinaMenuProvider: React.SFC<MenuProviderProps> = ({children}) => {
                     tags: updatedMenu.tags || [],
                 });
             }
-        }
+        },
+        label: id + " menu"
     })), [menuIds, menuSelect]);
-    console.log(menuIds);
     const menus = useMenuForms(menuSpecs);
     const menuCallback = React.useCallback((id: string) => {
         const menuContent = menus[id] || menuSelect(id);

@@ -16,16 +16,18 @@ export function useMenuStore(stream: DataStream<Menu>, initialMenuIds: string[] 
         };
         return newState;
     }, {});
-    const justMounted = React.useRef(true);
     const newMenuIds = React.useMemo(() => [...menuIds], [menuIds]);
+    const updateRef = React.useRef<Promise<void> | null>(null);
+    const loadRef = React.useRef<{[x: string]: boolean}>({});
     const menu = React.useCallback((id: string): Entry & Menu => {
         const m = menuMap[id];
 
         if (!m && newMenuIds.indexOf(id) === -1) {
-            if (justMounted.current === false) {
-                setMenuIds([...newMenuIds, id]);
-            } else {
-                newMenuIds.push(id);
+            newMenuIds.push(id);
+            if (!updateRef.current) {
+                updateRef.current = Promise.resolve().then(() => {
+                    setMenuIds([...newMenuIds]);
+                });
             }
         }
 
@@ -39,8 +41,8 @@ export function useMenuStore(stream: DataStream<Menu>, initialMenuIds: string[] 
     React.useEffect(() => {
         (async () => {
             for (let menuId of menuIds) {
-                console.log(menuId);
-                if (!menuMap[menuId]) {
+                if (!menuMap[menuId] && !loadRef.current[menuId]) {
+                    loadRef.current[menuId] = true;
                     const m = await stream.first({
                         type: "property",
                         propertyId: "name" as "name",
@@ -51,13 +53,6 @@ export function useMenuStore(stream: DataStream<Menu>, initialMenuIds: string[] 
             }
         })();
     }, [menuIds, menuMap, stream]);
-    React.useEffect(() => {
-        if (justMounted.current === true && JSON.stringify(newMenuIds) !== JSON.stringify(menuIds)) {
-            setMenuIds(newMenuIds);
-        }
-        justMounted.current = false;
-    }, [newMenuIds, menuIds, justMounted]);
-    console.log(justMounted);
     const loadedMenuIds = React.useMemo(() => Object.keys(menuMap), [menuMap]);
     return [menu, loadedMenuIds];
 }

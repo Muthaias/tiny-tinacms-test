@@ -70,9 +70,7 @@ export function useForms<FormShape = any>(formOptions: {
         const form = forms[formIndex];
         const options = formOptions[formIndex].options;
         if (options.loadInitialValues) {
-          console.log("can load:", options.id);
             options.loadInitialValues().then((values: any) => {
-              console.log("initial values: ", values);
                 form.updateInitialValues(values)
             })
         }

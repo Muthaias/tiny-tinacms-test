@@ -26,6 +26,8 @@ const ApplicationContainer = styled.div`
 
 export const Application: React.FunctionComponent = () => {
     const menu = useMenu();
+    const links = useMenu("Links");
+    console.log(links);
     return (
         <ApplicationContainer className="application">
             <ThemeStyles />
