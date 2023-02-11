@@ -1,7 +1,7 @@
 import * as React from "react";
 import {
     useScreenPlugin,
-} from "tinacms";
+} from "@tinacms/toolkit";
 import {useHistory} from "react-router-dom";
 
 import {

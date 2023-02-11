@@ -1,4 +1,4 @@
-import {ContentCreatorPlugin} from "tinacms";
+import {ContentCreatorPlugin} from "@tinacms/toolkit";
 import {Post} from "../datastore";
 
 export function postCreator({

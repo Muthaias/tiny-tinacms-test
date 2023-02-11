@@ -4,7 +4,7 @@ import {
     FormOptions,
     useForm,
     usePlugin,
-} from "tinacms";
+} from "@tinacms/toolkit";
 
 import {
     Entry,

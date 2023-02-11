@@ -1,6 +1,7 @@
 import * as React from "react";
 import {useMemo} from "react";
-import {TinaCMS, TinaProvider} from "tinacms";
+import {TinaCMS, TinaProvider} from "@tinacms/toolkit";
+import {EditProvider} from "@tinacms/sharedctx";
 
 import {
     PostSelector,
@@ -27,7 +28,9 @@ export const CMSProvider: React.FunctionComponent<{init: () => TinaCMS, children
     const routeMatch = useRouteMatch<{menuId: string}>("/menu/:menuId");
 
     return (
+        <EditProvider>
         <TinaProvider cms={cms}>
+            
             <TinaMenuProvider menuId={routeMatch?.params.menuId || "Main"}>
                 <PostSelector />
                 <PageSelector />
@@ -44,12 +47,14 @@ export const CMSProvider: React.FunctionComponent<{init: () => TinaCMS, children
                         </ContentContext.Provider>
                     )} />
                     <Route path="*" render={({match}) => (
-                        <ContentContext.Provider value={mockPagesData[match.params.pageId] || mockPagesData[0]}>
+                        <ContentContext.Provider value={mockPagesData[0]}>
                             {React.Children.toArray(props.children)}
                         </ContentContext.Provider>
                     )} />
                 </Switch>
             </TinaMenuProvider>
+            
         </TinaProvider>
+        </EditProvider>
     );
 }

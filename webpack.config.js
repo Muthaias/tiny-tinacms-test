@@ -5,6 +5,15 @@ module.exports = (env) => {
         production: false,
     };
     const reactLib = env.production ? "production.min" : "development";
+    const devServer = env.production ? {} : {
+        devServer: {
+            static: {
+                directory: "/opt/dist",
+            },
+            compress: false,
+            port: 3000,
+        }
+    }
     return {
         mode: env.production ? "production" : "development",
         watch: env.production ? false : true,
@@ -13,6 +22,8 @@ module.exports = (env) => {
             admin: "./src/admin.tsx",
             main: "./src/index.tsx",
         },
+
+        ...devServer,
 
         // Enable sourcemaps for debugging webpack's output.
         devtool: "source-map",
@@ -47,13 +58,16 @@ module.exports = (env) => {
         },
 
         plugins: [
-            new CopyPlugin([
-                { from: "./index.html", to: "./index.html" },
-                { from: "./admin.html", to: "./admin.html" },
-                { from: "./data/data.json", to: "./data/data.json" },
-                { from: "./node_modules/react/umd/react." + reactLib + ".js", to: "./vendor/react.js" },
-                { from: "./node_modules/react-dom/umd/react-dom." + reactLib + ".js", to: "./vendor/react-dom.js" },
-            ]),
+            new CopyPlugin(
+                {
+                    patterns: [
+                        { from: "./rsc", to: "." },
+                        { from: "./data/data.json", to: "./data/data.json" },
+                        { from: "./node_modules/react/umd/react." + reactLib + ".js", to: "./vendor/react.js" },
+                        { from: "./node_modules/react-dom/umd/react-dom." + reactLib + ".js", to: "./vendor/react-dom.js" },
+                    ]
+                }
+            ),
         ],
     }
 };

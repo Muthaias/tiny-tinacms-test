@@ -1,4 +1,4 @@
-import {useCMS} from "tinacms";
+import {useCMS} from "@tinacms/toolkit";
 
 import {
     EntryStore,

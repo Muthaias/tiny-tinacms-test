@@ -1,4 +1,4 @@
-import {TinaCMS} from "tinacms";
+import {TinaCMS} from "@tinacms/toolkit";
 import {postCreator, menuCreator} from "../plugins";
 import {EntryStore, Author, Post, Menu, DataSearch, ContentBlockType} from "../datastore";
 
@@ -18,7 +18,7 @@ export function cmsFromStores(
     menuStore: EntryStore<Menu> & DataSearch<Menu>,
     authorStore: EntryStore<Author>,
 ): TinaCMS {
-    const cms = new TinaCMS();
+    const cms = new TinaCMS({sidebar: true});
     cms.plugins.add(
         postCreator({
             name: "Add Post",
@@ -81,10 +81,17 @@ export function cmsFromStores(
             }
         })
     );
-
+    
+    window.localStorage.setItem("tina.isEditing", "true");
     cms.registerApi("authors", authorStore);
     cms.registerApi("posts", postStore);
     cms.registerApi("pages", pageStore);
     cms.registerApi("menu", menuStore);
+    cms.registerApi("admin", {
+        fetchCollections: (...args) => {
+            return []
+        }
+    });
+    cms.enable();
     return cms;
 }

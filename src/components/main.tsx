@@ -79,7 +79,7 @@ export const MainCore: React.FunctionComponent<ContentData> = (data) => {
                             );
                             case ContentBlockType.Text: return (
                                 <TextWrapper key={index}>
-                                    <ReactMarkdown key={index} source={block.text || ""} />
+                                    <ReactMarkdown key={index}>{block.text || ""}</ReactMarkdown>
                                 </TextWrapper>
                             );
                             case ContentBlockType.Gallery: return (

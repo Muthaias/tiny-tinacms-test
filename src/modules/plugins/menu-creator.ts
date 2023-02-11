@@ -1,4 +1,4 @@
-import {ContentCreatorPlugin} from "tinacms";
+import {ContentCreatorPlugin} from "@tinacms/toolkit";
 import {Menu} from "../datastore";
 
 export function menuCreator({

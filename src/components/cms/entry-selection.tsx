@@ -98,7 +98,7 @@ export interface EntrySupplier<T> {
     addEntry?: () => Promise<Entry<T>>;
     count(): Promise<number>;
     viewEntry(entry: Entry<T>);
-    removeEntry(entry: Entry<T>): Promise<void>;
+    removeEntry?(entry: Entry<T>): Promise<void>;
 };
 
 export function useEntrySelection<T>(name: string, supplier: EntrySupplier<T>, entriesPerPage: number = 10): ScreenOptions {

@@ -1,0 +1,14 @@
+FROM node:18-alpine
+
+COPY ./package.json /opt/package.json
+WORKDIR /opt
+RUN npx yarn install
+
+COPY ./webpack.config.js /opt/webpack.config.js
+COPY ./tsconfig.json /opt/tsconfig.json
+
+VOLUME [ "/opt/rsc" ]
+VOLUME [ "/opt/src" ]
+VOLUME [ "/opt/data" ]
+WORKDIR /opt/
+ENTRYPOINT [ "sh" ]
