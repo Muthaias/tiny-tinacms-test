@@ -1,4 +1,4 @@
-import {ContentCreatorPlugin} from "@tinacms/toolkit";
+import {AddContentPlugin} from "@tinacms/toolkit";
 import {Menu} from "../datastore";
 
 export function menuCreator({
@@ -7,7 +7,7 @@ export function menuCreator({
 }: {
     name: string,
     onSubmit: (c: Pick<Menu, "name">) => Promise<any>;
-}): ContentCreatorPlugin<Pick<Menu, "name">> {
+}): AddContentPlugin<Pick<Menu, "name">> {
     return {
         name: name,
         __type: "content-creator",

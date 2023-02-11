@@ -29,32 +29,30 @@ export const CMSProvider: React.FunctionComponent<{init: () => TinaCMS, children
 
     return (
         <EditProvider>
-        <TinaProvider cms={cms}>
-            
-            <TinaMenuProvider menuId={routeMatch?.params.menuId || "Main"}>
-                <PostSelector />
-                <PageSelector />
-                <Switch>
-                    <Route path="/post/:postId" render={({match}) => (
-                        <TinaPostProvider postId={match.params.postId}>{React.Children.toArray(props.children)}</TinaPostProvider>
-                    )} />
-                    <Route path="/page/:pageId" render={({match}) => (
-                        <TinaPageProvider pageId={match.params.pageId}>{React.Children.toArray(props.children)}</TinaPageProvider>
-                    )} />
-                    <Route path="/listing/:listingId" render={({match}) => (
-                        <ContentContext.Provider value={mockListingsData[match.params.listingId] || mockListingsData[0]}>
-                            {React.Children.toArray(props.children)}
-                        </ContentContext.Provider>
-                    )} />
-                    <Route path="*" render={({match}) => (
-                        <ContentContext.Provider value={mockPagesData[0]}>
-                            {React.Children.toArray(props.children)}
-                        </ContentContext.Provider>
-                    )} />
-                </Switch>
-            </TinaMenuProvider>
-            
-        </TinaProvider>
+            <TinaProvider cms={cms}>
+                <TinaMenuProvider menuId={routeMatch?.params.menuId || "Main"}>
+                    <PostSelector />
+                    <PageSelector />
+                    <Switch>
+                        <Route path="/post/:postId" render={({match}) => (
+                            <TinaPostProvider postId={match.params.postId}>{React.Children.toArray(props.children)}</TinaPostProvider>
+                        )} />
+                        <Route path="/page/:pageId" render={({match}) => (
+                            <TinaPageProvider pageId={match.params.pageId}>{React.Children.toArray(props.children)}</TinaPageProvider>
+                        )} />
+                        <Route path="/listing/:listingId" render={({match}) => (
+                            <ContentContext.Provider value={mockListingsData[match.params.listingId] || mockListingsData[0]}>
+                                {React.Children.toArray(props.children)}
+                            </ContentContext.Provider>
+                        )} />
+                        <Route path="*" render={({match}) => (
+                            <ContentContext.Provider value={mockPagesData[0]}>
+                                {React.Children.toArray(props.children)}
+                            </ContentContext.Provider>
+                        )} />
+                    </Switch>
+                </TinaMenuProvider>
+            </TinaProvider>
         </EditProvider>
     );
 }

@@ -1,4 +1,4 @@
-import {ContentCreatorPlugin} from "@tinacms/toolkit";
+import {AddContentPlugin} from "@tinacms/toolkit";
 import {Post} from "../datastore";
 
 export function postCreator({
@@ -7,7 +7,7 @@ export function postCreator({
 }: {
     name: string,
     onSubmit: (c: Pick<Post, "title">) => Promise<any>;
-}): ContentCreatorPlugin<Pick<Post, "title">> {
+}): AddContentPlugin<Pick<Post, "title">> {
     return {
         name: name,
         __type: "content-creator",

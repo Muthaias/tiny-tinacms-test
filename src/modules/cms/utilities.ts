@@ -88,10 +88,11 @@ export function cmsFromStores(
     cms.registerApi("pages", pageStore);
     cms.registerApi("menu", menuStore);
     cms.registerApi("admin", {
-        fetchCollections: (...args) => {
+        fetchCollections: () => {
             return []
         }
     });
     cms.enable();
+    cms.flags.set("tina-admin", false);
     return cms;
 }
