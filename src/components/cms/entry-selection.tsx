@@ -1,5 +1,5 @@
 import * as React from "react";
-import {ScreenOptions} from "@tinacms/react-screens";
+import {ScreenOptions} from "@tinacms/toolkit/dist/packages/react-screens";
 import styled from "styled-components";
 
 const ContentWrapper = styled.div`

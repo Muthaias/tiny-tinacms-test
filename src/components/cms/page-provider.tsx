@@ -10,7 +10,7 @@ import {
 
 import {useContentForm} from "./utilities";
 
-export const TinaPageProvider: React.SFC<{pageId: string, children: any}> = ({pageId, children}) => {
+export const TinaPageProvider: React.FunctionComponent<{pageId: string, children: any}> = ({pageId, children}) => {
     const pagesApi = usePages();
     const post = useContentForm(
         pageId,

@@ -9,7 +9,7 @@ export interface GalleryProps {
     height: string;
 };
 
-export const Gallery: React.SFC<GalleryProps> = ({images}) => {
+export const Gallery: React.FunctionComponent<GalleryProps> = ({images}) => {
     const [positionIndex, setPositionIndex] = React.useState(0);
     const [positions, setPositions] = React.useState([-50]);
     const [imageCount, setImageCount] = React.useState(0);

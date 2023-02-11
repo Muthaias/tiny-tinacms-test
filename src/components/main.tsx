@@ -94,7 +94,7 @@ export const MainCore: React.FunctionComponent<ContentData> = (data) => {
     );
 }
 
-export const Main: React.SFC = () => {
+export const Main: React.FunctionComponent = () => {
     const content = useContent();
     React.useEffect(() => {
         const type = {

@@ -118,7 +118,7 @@ const MenuItem = styled.div`
 export interface MenuProps extends MenuData {
 };
 
-export const Menu: React.SFC<MenuProps> = function ({items}: MenuProps) {
+export const Menu: React.FunctionComponent<MenuProps> = function ({items}: MenuProps) {
     const [open, setOpen] = React.useState(false);
     return (
         <>

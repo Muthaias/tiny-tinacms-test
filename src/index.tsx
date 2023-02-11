@@ -31,7 +31,7 @@ interface Streams {
     menus: DataStream<Menu>;
 }
 type DataStream<T> = EntryRead<T> & DataSearch<T>;
-const DataProvider: React.SFC<{streams: Streams, menuId: string, children}> = ({streams, menuId, children}) => {
+const DataProvider: React.FunctionComponent<{streams: Streams, menuId: string, children}> = ({streams, menuId, children}) => {
     const history = useHistory();
     const [mainMenu, setMainMenu] = React.useState<MenuData>({items: []});
     const [content, setContent] = React.useState<ContentData>(mockPostsData[0]);

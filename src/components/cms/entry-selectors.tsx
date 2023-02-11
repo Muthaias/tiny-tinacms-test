@@ -11,7 +11,7 @@ import {
 import {Entry, Post} from "../../modules/datastore";
 import {useEntrySelection} from "./entry-selection";
 
-export const PostSelector: React.SFC = () => {
+export const PostSelector: React.FunctionComponent = () => {
     const postsApi = usePosts();
     const history = useHistory();
     const entrySelection = useEntrySelection<Entry & Post>("Post selection", {
@@ -32,7 +32,7 @@ export const PostSelector: React.SFC = () => {
     return <></>
 }
 
-export const PageSelector: React.SFC = () => {
+export const PageSelector: React.FunctionComponent = () => {
     const pagesApi = usePages();
     const history = useHistory();
     const entrySelection = useEntrySelection<Entry & Post>("Page selection", {

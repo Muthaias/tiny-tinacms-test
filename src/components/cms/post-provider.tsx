@@ -8,7 +8,7 @@ import {
 } from "../../contexts";
 import {useContentForm} from "./utilities";
 
-export const TinaPostProvider: React.SFC<{postId: string, children: any}> = ({postId, children}) => {
+export const TinaPostProvider: React.FunctionComponent<{postId: string, children: any}> = ({postId, children}) => {
     const postsApi = usePosts();
     const post = useContentForm(
         postId,

@@ -100,7 +100,7 @@ export type MenuProviderProps = {
     children: any;
 };
 
-export const TinaMenuProvider: React.SFC<MenuProviderProps> = ({menuId, children}) => {
+export const TinaMenuProvider: React.FunctionComponent<MenuProviderProps> = ({menuId, children}) => {
     const history = useHistory();
     const menusApi = useMenus();
     const menu = useMenuForm(
