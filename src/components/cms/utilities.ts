@@ -55,7 +55,7 @@ const TextBlock = {
         {
             label: "Text",
             name: "text",
-            component: "markdown",
+            component: "textarea",
         },
     ],
     itemProps: item => ({
