@@ -1,3 +1,5 @@
+`Note:` A lot of things are quite broken at the moment due to me upgrading to a modern version of TinaCMS. The github pages are built using an old version of this project and is currently a better representation of what the goal of this project is. I will try to reach feature parity as soon as possible and at that point I will update the pages.
+
 # Disclaimer
 This is not the best code in the world. This is just a tribute. I wanted to see how `TinaCMS` works and I wanted a tiny setup so I made a tiny setup. Dependencies takes no prisoners so make sure to use `yarn` if you care to keep your sanity. Just a word of caution for your own sake. Happy coding.
 
