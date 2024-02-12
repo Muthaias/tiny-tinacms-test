@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
+import { createRoot } from 'react-dom/client';
 
 import {
     cmsFromStores,
@@ -21,7 +21,10 @@ const dataPrefix = "contentBlocks:withGallery:";
 function renderSite(
     targetId: string = "app"
 ) {
-    ReactDOM.render(
+        
+    const container: Element = document.getElementById(targetId) as Element;
+    const root = createRoot(container);
+    root.render(
         <Router>
             <CMSProvider
                 init={() => cmsFromStores(
@@ -33,8 +36,7 @@ function renderSite(
             >
                 <Application />
             </CMSProvider>
-        </Router>,
-        document.getElementById(targetId)
+        </Router>
     );
 }
 
