@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@tinacms/sharedctx": "1.0.1",
-    "@tinacms/toolkit": "1.7.0",
+    "@tinacms/toolkit": "1.7.13",
     "@types/react-router-dom": "^5.1.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
