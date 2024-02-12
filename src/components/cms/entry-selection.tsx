@@ -1,5 +1,6 @@
 import * as React from "react";
 import {ScreenOptions} from "@tinacms/toolkit/dist/packages/react-screens";
+import {TrashIcon} from "@tinacms/toolkit"
 import styled from "styled-components";
 
 const ContentWrapper = styled.div`
@@ -15,11 +16,19 @@ const ListWrapper = styled.div`
 const IconButton = styled.div`
     color: var(--tina-color-grey-3);
     flex-grow: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     line-height: 300%;
     padding: 0 var(--tina-padding-small);
     transition: background 0.1s;
     &:hover {
         background: var(--tina-color-grey-1);
+    }
+
+    & > .icon {
+        width: 20px;
+        height: 20px;
     }
 `
 
@@ -132,7 +141,7 @@ export function useEntrySelection<T>(name: string, supplier: EntrySupplier<T>, e
                                             props.close();
                                         }}
                                     >{e.label}</TextWrapper>
-                                    {supplier.removeEntry && <IconButton>x</IconButton>}
+                                    {supplier.removeEntry && <IconButton><TrashIcon className="icon"/></IconButton>}
                                 </ElementWrapper>
                             );
                         })}
