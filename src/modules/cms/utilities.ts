@@ -19,6 +19,8 @@ export function cmsFromStores(
     authorStore: EntryStore<Author>,
 ): TinaCMS {
     const cms = new TinaCMS({sidebar: true});
+    cms.plugins.remove<any>(cms.plugins.getType<any>('cloud-config').all()[0])
+    cms.plugins.remove<any>(cms.plugins.getType<any>('screen').all()[0])
     cms.plugins.add(
         postCreator({
             name: "Add Post",
@@ -91,6 +93,13 @@ export function cmsFromStores(
         fetchCollections: () => {
             return []
         }
+    });
+    cms.registerApi("tina", {
+        isCustomContentApi: false,
+        isAuthorized() {return true},
+        fetchEvents() {return {events: []}},
+        usingProtectedBranch() {return false},
+        isLocalMode: true
     });
     cms.enable();
     cms.flags.set("tina-admin", false);
