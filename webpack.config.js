@@ -17,6 +17,9 @@ module.exports = (env) => {
     return {
         mode: env.production ? "production" : "development",
         watch: env.production ? false : true,
+        output: {
+            libraryTarget: "umd",
+        },
 
         entry: {
             admin: "./src/admin.tsx",
@@ -26,7 +29,7 @@ module.exports = (env) => {
         ...devServer,
 
         // Enable sourcemaps for debugging webpack's output.
-        devtool: "source-map",
+        ...env.production ? {} : {devtool: "source-map"},
 
         resolve: {
             // Add '.ts' and '.tsx' as resolvable extensions.
